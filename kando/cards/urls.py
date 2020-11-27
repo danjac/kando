@@ -8,6 +8,7 @@ app_name = "cards"
 
 urlpatterns = [
     path("<int:card_id>/", views.card_detail, name="card_detail"),
+    path("<int:card_id>/~edit/", views.edit_card, name="edit_card"),
     path("<int:card_id>/~delete/", views.delete_card, name="delete_card"),
     path("<int:project_id>/~create/", views.create_card, name="create_card"),
     path("<int:column_id>/~move/", views.move_cards, name="move_cards"),

@@ -21,7 +21,7 @@
        class="px-4 py-1 rounded border bg-white hover:bg-gray-100 sm:mr-2 mb-1 sm:mb-0 block w-full sm:w-auto">
       <i class="fa fa-plus mr-2"></i>{% translate "Add Another Card" %}
     </a>
-    <a href=""
+    <a href="{% url 'cards:edit_card' card.id %}"
        class="px-4 py-1 rounded border bg-white hover:bg-gray-100 block w-full sm:w-auto sm:mr-2 mb-1 sm:mb-0 block w-full sm:w-auto">
       <i class="fa fa-pen mr-2"></i>{% translate "Edit Card" %}
     </a>
@@ -34,5 +34,21 @@
     </button>
   </div>
 </div>
+
+<div class="flex items-center mb-3">
+  <div class="mr-2 font-bold">{% translate "Priority" %}</div>
+  <div class="mr-2">{{ card.priority }}</div>
+  <div class="mr-2 font-bold">{% translate "Complexity" %}</div>
+  <div class="mr-2">{{ card.complexity }}</div>
+  <div class="mr-2 font-bold">{% translate "Estimated Hours" %}</div>
+  <div class="">{{ card.hours_estimated }}</div>
+</div>
+
+{% if card.description %}
+<p class="bg-gray-100 rounded p-2">
+  {{ card.description|linebreaksbr }}
+</p>
+{% endif %}
+
 
 {% endblock content %}

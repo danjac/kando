@@ -27,6 +27,30 @@ class TestDeleteCard:
         assert Card.objects.count() == 0
 
 
+class TestEditCard:
+    def test_get(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        columns = ColumnFactory.create_batch(3, project=project)
+        card = CardFactory(project=project, column=columns[0])
+        response = client.get(reverse("cards:edit_card", args=[card.id]))
+        assert response.status_code == 200
+
+    def test_post(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        columns = ColumnFactory.create_batch(3, project=project)
+        card = CardFactory(project=project, column=columns[0])
+        data = {
+            "column": columns[0].id,
+            "name": "test card",
+            "description": "test desc",
+            "priority": 1,
+            "complexity": 1,
+            "hours_estimated": 1,
+        }
+        response = client.post(reverse("cards:edit_card", args=[card.id]), data)
+        assert response.url == card.get_absolute_url()
+
+
 class TestCreateCard:
     def test_get(self, client, login_user):
         project = ProjectFactory(owner=login_user)
@@ -46,9 +70,9 @@ class TestCreateCard:
             "hours_estimated": 1,
         }
         response = client.post(reverse("cards:create_card", args=[project.id]), data)
-        assert response.url == project.get_absolute_url()
-
         card = Card.objects.get()
+
+        assert response.url == card.get_absolute_url()
 
         assert card.owner == login_user
         assert card.project == project

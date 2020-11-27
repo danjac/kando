@@ -38,7 +38,7 @@ def create_card(request, project_id, column_id=None):
             ) + 1
             card.save()
             messages.success(request, _("Your card has been added"))
-            return redirect(project)
+            return redirect(card)
     else:
         form = CardForm(initial={"column": column_id}, project=project)
     return TemplateResponse(
@@ -55,6 +55,26 @@ def card_detail(request, card_id):
         pk=card_id,
     )
     return TemplateResponse(request, "cards/detail.html", {"card": card})
+
+
+@login_required
+def edit_card(request, card_id):
+    card = get_object_or_404(
+        Card.objects.filter(project__owner=request.user).select_related("project"),
+        pk=card_id,
+    )
+    if request.method == "POST":
+        form = CardForm(request.POST, instance=card)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Card has been updated"))
+            return redirect(card)
+    else:
+        form = CardForm(instance=card)
+
+    return TemplateResponse(
+        request, "cards/card_form.html", {"card": card, "form": form}
+    )
 
 
 @login_required
