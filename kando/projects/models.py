@@ -11,9 +11,8 @@ from model_utils.models import TimeStampedModel
 class ProjectQuerySet(models.QuerySet):
     def accessible_to(self, user):
         """Returns all projects a user is a member of,
-        either owner or member group/user"""
-        # for now we just have owners
-        return self.filter(owner=user)
+        either owner or member"""
+        return self.filter(models.Q(owner=user) | models.Q(members=user))
 
 
 class ProjectManager(models.Manager.from_queryset(ProjectQuerySet)):

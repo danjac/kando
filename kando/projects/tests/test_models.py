@@ -5,6 +5,7 @@ import pytest
 from kando.users.factories import UserFactory
 
 # Local
+from ..factories import ProjectMemberFactory
 from ..models import Project
 
 pytestmark = pytest.mark.django_db
@@ -26,3 +27,7 @@ class TestProjectManager:
 
     def test_accessible_to_if_not_owner(self, project):
         assert Project.objects.accessible_to(UserFactory()).count() == 0
+
+    def test_accessible_to_if_member(self, user):
+        ProjectMemberFactory(user=user)
+        assert Project.objects.accessible_to(user).count() == 1
