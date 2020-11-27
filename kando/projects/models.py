@@ -12,7 +12,10 @@ class ProjectQuerySet(models.QuerySet):
     def accessible_to(self, user):
         """Returns all projects a user is a member of,
         either owner or member"""
-        return self.filter(models.Q(owner=user) | models.Q(members=user))
+        return self.filter(
+            models.Q(owner=user)
+            | models.Q(projectmember__user=user, projectmember__is_active=True)
+        )
 
 
 class ProjectManager(models.Manager.from_queryset(ProjectQuerySet)):

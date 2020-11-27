@@ -11,6 +11,23 @@ from kando.columns.models import Column
 from kando.projects.models import Project
 
 
+class CardQuerySet(models.QuerySet):
+    def accessible_to(self, user):
+        """Returns all projects a user is a member of,
+        either owner or member"""
+        return self.filter(
+            models.Q(project__owner=user)
+            | models.Q(
+                project__projectmember__user=user,
+                project__projectmember__is_active=True,
+            )
+        )
+
+
+class CardManager(models.Manager.from_queryset(CardQuerySet)):
+    ...
+
+
 class Card(TimeStampedModel):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -47,6 +64,8 @@ class Card(TimeStampedModel):
 
     hours_estimated = models.PositiveIntegerField(default=0)
     hours_spent = models.PositiveIntegerField(default=0)
+
+    objects = CardManager()
 
     def __str__(self):
         return self.name

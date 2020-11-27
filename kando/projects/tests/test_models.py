@@ -31,3 +31,7 @@ class TestProjectManager:
     def test_accessible_to_if_member(self, user):
         ProjectMemberFactory(user=user)
         assert Project.objects.accessible_to(user).count() == 1
+
+    def test_accessible_to_if_inactive_member(self, user):
+        ProjectMemberFactory(user=user, is_active=False)
+        assert Project.objects.accessible_to(user).count() == 0

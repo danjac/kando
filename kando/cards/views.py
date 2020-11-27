@@ -24,7 +24,9 @@ from .models import Card
 def create_card(request, project_id, column_id=None):
 
     # for now, only owner can create card.
-    project = get_object_or_404(Project, owner=request.user, pk=project_id)
+    project = get_object_or_404(
+        Project.objects.accessible_to(request.user), pk=project_id
+    )
 
     if request.method == "POST":
         form = CardForm(request.POST, project=project)
