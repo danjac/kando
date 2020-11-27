@@ -59,6 +59,18 @@ def card_detail(request, card_id):
 
 @login_required
 @require_POST
+def delete_card(request, card_id):
+    card = get_object_or_404(
+        Card.objects.filter(project__owner=request.user).select_related("project"),
+        pk=card_id,
+    )
+    card.delete()
+    messages.info(request, _("Card has been deleted"))
+    return redirect(card.project)
+
+
+@login_required
+@require_POST
 def move_cards(request, column_id):
     # for now only owner can move cards
     column = get_object_or_404(

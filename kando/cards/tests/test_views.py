@@ -18,6 +18,15 @@ from ..models import Card
 pytestmark = pytest.mark.django_db
 
 
+class TestDeleteCard:
+    def test_post(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        card = CardFactory(project=project)
+        response = client.post(reverse("cards:delete_card", args=[card.id]))
+        assert response.url == project.get_absolute_url()
+        assert Card.objects.count() == 0
+
+
 class TestCreateCard:
     def test_get(self, client, login_user):
         project = ProjectFactory(owner=login_user)
