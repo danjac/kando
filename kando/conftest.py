@@ -7,6 +7,8 @@ from django.http import HttpResponse
 import pytest
 
 # Kando
+from kando.cards.factories import CardFactory
+from kando.columns.factories import ColumnFactory
 from kando.projects.factories import ProjectFactory
 from kando.users.factories import UserFactory
 
@@ -44,3 +46,15 @@ def login_user(client):
 @pytest.fixture
 def project(user):
     return ProjectFactory(owner=user)
+
+
+@pytest.fixture
+def column(project):
+    return ColumnFactory(project=project)
+
+
+@pytest.fixture
+def card(column):
+    return CardFactory(
+        project=column.project, column=column, owner=column.project.owner
+    )
