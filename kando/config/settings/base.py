@@ -49,6 +49,7 @@ ROOT_URLCONF = "kando.config.urls"
 WSGI_APPLICATION = "kando.config.wsgi.application"
 
 LOCAL_APPS = [
+    "kando.columns.apps.ColumnsConfig",
     "kando.projects.apps.ProjectsConfig",
     "kando.users.apps.UsersConfig",
 ]
