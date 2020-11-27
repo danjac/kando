@@ -35,6 +35,6 @@ class CardForm(forms.ModelForm):
         if self.project.task_limit and card_count >= self.project.task_limit:
             raise forms.ValidationError(
                 _("You have exceeded the card limit of %(limit)s for this column"),
-                {"limit": self.project.task_limit},
+                params={"limit": self.project.task_limit},
             )
         return column
