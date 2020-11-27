@@ -7,7 +7,15 @@ from django.utils.translation import gettext as _
 from model_utils.models import TimeStampedModel
 
 
-class ProjectManager(models.Manager):
+class ProjectQuerySet(models.QuerySet):
+    def accessible_to(self, user):
+        """Returns all projects a user is a member of,
+        either owner or member group/user"""
+        # for now we just have owners
+        return self.filter(owner=user)
+
+
+class ProjectManager(models.Manager.from_queryset(ProjectQuerySet)):
     def create_project(self, name, owner, **kwargs):
         """Creates a new project with default columns """
 

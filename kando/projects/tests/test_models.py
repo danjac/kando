@@ -1,6 +1,9 @@
 # Third Party Libraries
 import pytest
 
+# Kando
+from kando.users.factories import UserFactory
+
 # Local
 from ..models import Project
 
@@ -17,3 +20,9 @@ class TestProjectManager:
         columns = project.column_set.order_by("position")
         assert columns[0].name == "Backlog"
         assert columns[0].position == 1
+
+    def test_accessible_to_if_owner(self, project):
+        assert Project.objects.accessible_to(project.owner).count() == 1
+
+    def test_accessible_to_if_not_owner(self, project):
+        assert Project.objects.accessible_to(UserFactory()).count() == 0

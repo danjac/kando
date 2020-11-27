@@ -7,6 +7,7 @@ from django.http import HttpResponse
 import pytest
 
 # Kando
+from kando.projects.factories import ProjectFactory
 from kando.users.factories import UserFactory
 
 
@@ -38,3 +39,8 @@ def login_user(client):
     user.save()
     client.login(username=user.username, password=password)
     return user
+
+
+@pytest.fixture
+def project(user):
+    return ProjectFactory(owner=user)
