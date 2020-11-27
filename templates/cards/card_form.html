@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-3">
+  {% if card %}
+  {% translate "Edit Card" %}
+  {% else %}
+  {% translate "New Card" %}
+  {% endif %}
+</h1>
+<form class="p-2 bg-white border rounded"
+      data-controller="form"
+      data-action="form#submit"
+      method="post"
+      action="{{ request.path }}"
+      novalidate>
+  {% csrf_token %}
+  {% with WIDGET_ERROR_CLASS="form-input-error" widget_class="form-input text-lg p-2 w-full" label_class="text-lg mb-1 font-semibold" %}
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.name.label }}
+      {% render_field form.name class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.name.errors %}
+  </div>
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.column.label }}
+      {% render_field form.column class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.column.errors %}
+  </div>
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.description.label }}
+      {% render_field form.description class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.description.errors %}
+  </div>
+  <div class="mb-3 flex">
+    <div class="mr-2">
+      <label class="{{ label_class }}">
+        {{ form.complexity.label }}
+        {% render_field form.complexity class=widget_class %}
+      </label>
+      {% include "_form_errors.html" with errors=form.complexity.errors %}
+    </div>
+    <div class="mr-2">
+      <label class="{{ label_class }}">
+        {{ form.priority.label }}
+        {% render_field form.priority class=widget_class %}
+      </label>
+      {% include "_form_errors.html" with errors=form.priority.errors %}
+    </div>
+    <div>
+      <label class="{{ label_class }}">
+        {{ form.hours_estimated.label }}
+        {% render_field form.hours_estimated class=widget_class %}
+      </label>
+      {% include "_form_errors.html" with errors=form.hours_estimated.errors %}
+    </div>
+  </div>
+  {% endwith %}
+  <div class="flex justify-end items-center">
+    <a href="{% url 'projects:project_board' project.id %}"
+       class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
+    <button type="submit"
+            class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
+      {% if card %}
+      {% translate "Save Card" %}
+      {% else %}
+      {% translate "Create Card" %}
+      {% endif %}
+    </button>
+  </div>
+</form>
+{% endblock %}

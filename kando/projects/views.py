@@ -66,6 +66,11 @@ def project_board(request, project_id):
         Project.objects.accessible_to(request.user), pk=project_id
     )
     columns = project.column_set.order_by("position")
+    cards = project.card_set.order_by("position").select_related(
+        "project", "owner", "column"
+    )
     return TemplateResponse(
-        request, "projects/board.html", {"project": project, "columns": columns}
+        request,
+        "projects/board.html",
+        {"project": project, "columns": columns, "cards": cards},
     )

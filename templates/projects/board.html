@@ -6,7 +6,7 @@
 <div class="sm:flex items-center justify-between mb-3">
   <h1 class="text-xl font-bold mb-3 sm:mb-0">{{ project.name }}</h1>
   <div class="sm:flex items-center">
-    <a href=""
+    <a href="{% url 'cards:create_card' project.id %}"
        class="px-4 py-1 rounded border bg-white hover:bg-gray-100 sm:mr-2 mb-1 sm:mb-0 block w-full sm:w-auto">
       <i class="fa fa-plus mr-2"></i>{% translate "Add Card" %}
     </a>
@@ -21,18 +21,25 @@
   </div>
 </div>
 
-<div class="md:flex items-center md:overflow-x-auto md:whitespace-no-wrap">
+<div class="md:flex md:overflow-x-auto md:whitespace-no-wrap">
   {% for column in columns %}
   <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border min-h-64">
     <div class="bg-gray-100 flex items-center justify-start md:justify-center font-bold text-lg p-2">
       {{ column.name }}
-      <button class="ml-2 focus:outline-none"
-              title="Add New Card">
+      <a class="ml-2 focus:outline-none"
+         title="Add New Card"
+         href="{% url 'cards:create_card_for_column' project.id column.id %}">
         <i class="fa fa-plus"></i>
-      </button>
+      </a>
     </div>
     <div class="p-2 bg-white">
-      cards go here...
+      {% for card in cards %}
+      {% if card.column == column %}
+      <div class="p-2 mb-3 border rounded bg-blue-500 text-white h-12">
+        {{ card.name }}
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
   </div>
   {% endfor %}

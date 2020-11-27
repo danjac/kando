@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", include("kando.projects.urls")),
+    path("cards/", include("kando.cards.urls")),
     path("account/", include("allauth.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
