@@ -51,6 +51,7 @@ WSGI_APPLICATION = "kando.config.wsgi.application"
 LOCAL_APPS = [
     "kando.columns.apps.ColumnsConfig",
     "kando.projects.apps.ProjectsConfig",
+    "kando.swimlanes.apps.SwimlanesConfig",
     "kando.users.apps.UsersConfig",
 ]
 
