@@ -58,7 +58,7 @@ def move_cards(request, column_id):
     except (KeyError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
-    if len(card_ids) > column.project.task_limit:
+    if column.project.task_limit and len(card_ids) > column.project.task_limit:
         return HttpResponseBadRequest("Exceeds project task limit")
 
     qs = column.project.card_set.all()

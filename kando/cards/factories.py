@@ -11,7 +11,7 @@ from kando.users.factories import UserFactory
 from .models import Card
 
 
-class ColumnFactory(DjangoModelFactory):
+class CardFactory(DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     column = factory.SubFactory(ColumnFactory)
     owner = factory.SubFactory(UserFactory)
