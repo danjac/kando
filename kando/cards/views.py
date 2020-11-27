@@ -1,12 +1,18 @@
+# Standard Library
+import json
+
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 
 # Kando
+from kando.columns.models import Column
 from kando.projects.models import Project
 
 # Local
@@ -37,3 +43,32 @@ def create_card(request, project_id, column_id=None):
     return TemplateResponse(
         request, "cards/card_form.html", {"form": form, "project": project}
     )
+
+
+@login_required
+@require_POST
+def move_cards(request, column_id):
+    column = get_object_or_404(
+        Column.objects.filter(project__owner=request.user).select_related("project"),
+        pk=column_id,
+    )
+
+    try:
+        card_ids = [int(pk) for pk in json.loads(request.body)["items"]]
+    except (KeyError, ValueError):
+        return HttpResponseBadRequest("Invalid payload")
+
+    if len(card_ids) > column.project.task_limit:
+        return HttpResponseBadRequest("Exceeds project task limit")
+
+    qs = column.project.card_set.all()
+    cards = qs.in_bulk()
+    for_update = []
+    for position, card_id in enumerate(card_ids, 1):
+        card = cards.get(card_id)
+        if card:
+            card.position = position
+            card.column_id = column_id
+            for_update.append(card)
+    qs.bulk_update(for_update, ["position", "column"])
+    return HttpResponse(status=204)
