@@ -1,6 +1,7 @@
 # Django
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext as _
 
 # Third Party Libraries
@@ -49,3 +50,6 @@ class Project(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("projects:project_board", args=[self.id])

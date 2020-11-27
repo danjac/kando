@@ -1,6 +1,7 @@
 # Django
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 # Third Party Libraries
 from model_utils.models import TimeStampedModel
@@ -49,3 +50,6 @@ class Card(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("cards:card_detail", args=[self.id])

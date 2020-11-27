@@ -17,6 +17,7 @@ from kando.projects.models import Project
 
 # Local
 from .forms import CardForm
+from .models import Card
 
 
 @login_required
@@ -46,8 +47,20 @@ def create_card(request, project_id, column_id=None):
 
 
 @login_required
+def card_detail(request, card_id):
+    card = get_object_or_404(
+        Card.objects.filter(project__owner=request.user).select_related(
+            "project", "column"
+        ),
+        pk=card_id,
+    )
+    return TemplateResponse(request, "cards/detail.html", {"card": card})
+
+
+@login_required
 @require_POST
 def move_cards(request, column_id):
+    # for now only owner can move cards
     column = get_object_or_404(
         Column.objects.filter(project__owner=request.user).select_related("project"),
         pk=column_id,

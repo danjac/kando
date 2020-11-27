@@ -42,7 +42,8 @@
       <div class="p-2 mb-3 border rounded bg-blue-500 text-white h-12 item"
            data-id="{{ card.id }}"
            data-target="drag.draggable">
-        {{ card.name }}
+        <a href="{{ card.get_absolute_url }}"
+           class="underline">{{ card.name }}</a>
       </div>
       {% endif %}
       {% endfor %}
