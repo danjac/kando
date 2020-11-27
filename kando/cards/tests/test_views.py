@@ -37,7 +37,7 @@ class TestCreateCard:
             "hours_estimated": 1,
         }
         response = client.post(reverse("cards:create_card", args=[project.id]), data)
-        assert response.url == reverse("projects:project_board", args=[project.id])
+        assert response.url == project.get_absolute_url()
 
         card = Card.objects.get()
 

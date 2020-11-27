@@ -27,9 +27,9 @@ def create_project(request):
     if request.method == "POST":
         form = ProjectCreationForm(request.POST)
         if form.is_valid():
-            form.save(request.user)
+            project = form.save(request.user)
             messages.success(request, _("Your project has been created"))
-            return redirect("projects:projects_overview")
+            return redirect(project)
     else:
         form = ProjectCreationForm()
     return TemplateResponse(request, "projects/project_form.html", {"form": form})
@@ -43,7 +43,7 @@ def edit_project(request, project_id):
         if form.is_valid():
             form.save()
             messages.success(request, _("Your project has been updated"))
-            return redirect("projects:project_board", project.id)
+            return redirect(project)
     else:
         form = ProjectForm(instance=project)
     return TemplateResponse(

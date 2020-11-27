@@ -35,6 +35,7 @@ class TestCreateProject:
         }
 
         response = client.post(reverse("projects:create_project"), data)
-        assert response.url == reverse("projects:projects_overview")
         project = Project.objects.get()
+
+        assert response.url == project.get_absolute_url()
         assert project.owner == login_user

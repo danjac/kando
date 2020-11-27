@@ -38,7 +38,7 @@ def create_card(request, project_id, column_id=None):
             ) + 1
             card.save()
             messages.success(request, _("Your card has been added"))
-            return redirect("projects:project_board", project.id)
+            return redirect(project)
     else:
         form = CardForm(initial={"column": column_id}, project=project)
     return TemplateResponse(

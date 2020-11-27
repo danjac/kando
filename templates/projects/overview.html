@@ -26,7 +26,7 @@
     {% for project in page_obj %}
     <tr class="{% cycle 'bg-white' 'bg-gray-100' %} hover:bg-blue-100">
       <td class="p-2 border-r">
-        <a href="{% url 'projects:project_board' project.id %}"
+        <a href="{{ project.get_absolute_url }}"
            class="text-blue-800 hover:text-blue-600">{{ project.name }}</a>
       </td>
       <td class="p-2 border-r">

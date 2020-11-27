@@ -63,7 +63,7 @@
   </div>
   {% endwith %}
   <div class="flex justify-end items-center">
-    <a href="{% url 'projects:project_board' project.id %}"
+    <a href="{{ project.get_absolute_url }}"
        class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
     <button type="submit"
             class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
