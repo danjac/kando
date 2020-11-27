@@ -1,6 +1,7 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -24,6 +25,10 @@ def create_card(request, project_id, column_id=None):
             card = form.save(commit=False)
             card.owner = request.user
             card.project = project
+            # tbd: tidy this up later
+            card.position = (
+                card.column.card_set.aggregate(Max("position"))["position__max"] or 0
+            ) + 1
             card.save()
             messages.success(request, _("Your card has been added"))
             return redirect("projects:project_board", project.id)
