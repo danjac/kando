@@ -1,12 +1,13 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 
 # Local
-from .forms import ProjectCreationForm
+from .forms import ProjectCreationForm, ProjectForm
 from .models import Project
 
 
@@ -32,3 +33,39 @@ def create_project(request):
     else:
         form = ProjectCreationForm()
     return TemplateResponse(request, "projects/project_form.html", {"form": form})
+
+
+@login_required
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, owner=request.user, pk=project_id)
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Your project has been update"))
+            return redirect("projects:project_board", project.id)
+    else:
+        form = ProjectForm(instance=project)
+    return TemplateResponse(
+        request, "projects/project_form.html", {"form": form, "project": project}
+    )
+
+
+@login_required
+@require_POST
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, owner=request.user, pk=project_id)
+    project.delete()
+    messages.info(request, _("Your project has been deleted"))
+    return redirect("projects:projects_overview")
+
+
+@login_required
+def project_board(request, project_id):
+    project = get_object_or_404(
+        Project.objects.accessible_to(request.user), pk=project_id
+    )
+    columns = project.column_set.order_by("position")
+    return TemplateResponse(
+        request, "projects/board.html", {"project": project, "columns": columns}
+    )

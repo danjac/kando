@@ -26,17 +26,20 @@
     {% for project in page_obj %}
     <tr class="{% cycle 'bg-white' 'bg-gray-100' %} hover:bg-blue-100">
       <td class="p-2 border-r">
-        <a href=""
+        <a href="{% url 'projects:project_board' project.id %}"
            class="text-blue-800 hover:text-blue-600">{{ project.name }}</a>
       </td>
       <td class="p-2 border-r">
         <a href="">{{ project.owner }}</a>
       </td>
       <td class="p-2 flex justify-end">
-        <a href=""
+        <a href="{% url 'projects:edit_project' project.id %}"
            class="text-blue-800 hover:text-blue-600 mr-2">Edit</a>
-        <a href=""
-           class="text-blue-800 hover:text-blue-600">Delete</a>
+        <button class="text-blue-800 hover:text-blue-600"
+                data-controller="ajax"
+                data-action="ajax#post"
+                data-ajax-confirm="{% translate 'Are you sure you want to delete this project?' %}"
+                data-ajax-url="{% url 'projects:delete_project' project.id %}">Delete</button>
       </td>
     </tr>
     {% empty %}

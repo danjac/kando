@@ -3,7 +3,11 @@
 
 {% block content %}
 <h1 class="text-xl font-bold mb-3">
-  {% translate project|yesno:"Edit Project,New Project" %}
+  {% if project %}
+  {% translate "Edit Project" %}
+  {% else %}
+  {% translate "New Project" %}
+  {% endif %}
 </h1>
 <form class="p-2 bg-white border rounded"
       data-controller="form"
@@ -43,10 +47,18 @@
     <p class="italic text-gray-500">{% translate "The maximum number of tasks allowed per column. If 0 then there is no set limit." %}</p>
   </div>
   {% endwith %}
-  <div class="flex justify-end">
+  <div class="flex justify-end items-center">
+    {% if project %}
+    <a href="{% url 'projects:project_board' project.id %}"
+       class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
+    {% endif %}
     <button type="submit"
             class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
-      {% translate project|yesno:"Save Project,Create Project" %}
+      {% if project %}
+      {% translate "Save Project" %}
+      {% else %}
+      {% translate "Create Project" %}
+      {% endif %}
     </button>
   </div>
 </form>
