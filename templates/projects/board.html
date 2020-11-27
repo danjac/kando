@@ -35,13 +35,13 @@
     <div class="p-2 bg-white"
          data-controller="drag"
          data-drag-group="shared"
+         data-drag-limit="{{ project.task_limit }}"
          data-drag-url="{% url 'cards:move_cards' column.id %}">
       {% for card in cards %}
       {% if card.column == column %}
       <div class="p-2 mb-3 border rounded bg-blue-500 text-white h-12 item"
            data-id="{{ card.id }}"
-           data-target="drag.draggable"
-           data-drag-position="{{ card.position }}">
+           data-target="drag.draggable">
         {{ card.name }}
       </div>
       {% endif %}

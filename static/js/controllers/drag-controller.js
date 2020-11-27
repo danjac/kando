@@ -27,6 +27,13 @@ export default class extends Controller {
     this.draggableTargets.forEach((target) => {
       items.push(target.dataset.id);
     });
+    if (this.limit && items.length > this.limit) {
+      return false;
+    }
     axios.post(this.data.get('url'), { items });
+  }
+
+  get limit() {
+    return parseInt(this.data.get('limit') || 0);
   }
 }

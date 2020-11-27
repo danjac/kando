@@ -23,8 +23,12 @@ class Card(TimeStampedModel):
         related_name="owned_cards",
     )
 
-    assignees = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name="assigned_cards",
+    assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="assigned_cards",
     )
 
     name = models.CharField(max_length=200)
