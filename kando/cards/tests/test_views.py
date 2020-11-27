@@ -18,6 +18,43 @@ from ..models import Card
 pytestmark = pytest.mark.django_db
 
 
+class TestCreateCard:
+    def test_get(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        ColumnFactory.create_batch(3, project=project)
+        response = client.get(reverse("cards:create_card", args=[project.id]))
+        assert response.status_code == 200
+
+    def test_post(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        columns = ColumnFactory.create_batch(3, project=project)
+        data = {
+            "column": columns[0].id,
+            "name": "test card",
+            "description": "test desc",
+            "priority": 1,
+            "complexity": 1,
+            "hours_estimated": 1,
+        }
+        response = client.post(reverse("cards:create_card", args=[project.id]), data)
+        assert response.url == reverse("projects:project_board", args=[project.id])
+
+        card = Card.objects.get()
+
+        assert card.owner == login_user
+        assert card.project == project
+        assert card.column == columns[0]
+
+    def test_get_for_column(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        columns = ColumnFactory.create_batch(3, project=project)
+        response = client.get(
+            reverse("cards:create_card_for_column", args=[project.id, columns[0].id])
+        )
+        assert response.status_code == 200
+        assert response.context["form"].initial["column"] == columns[0].id
+
+
 class TestMoveCards:
     def test_post(self, client, login_user):
         project = ProjectFactory(owner=login_user)
