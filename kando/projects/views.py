@@ -37,7 +37,9 @@ def create_project(request):
 
 @login_required
 def edit_project(request, project_id):
-    project = get_object_or_404(Project, owner=request.user, pk=project_id)
+    project = get_object_or_404(
+        Project.objects.accessible_to(request.user), pk=project_id
+    )
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
@@ -54,7 +56,9 @@ def edit_project(request, project_id):
 @login_required
 @require_POST
 def delete_project(request, project_id):
-    project = get_object_or_404(Project, owner=request.user, pk=project_id)
+    project = get_object_or_404(
+        Project.objects.accessible_to(request.user), pk=project_id
+    )
     project.delete()
     messages.info(request, _("Your project has been deleted"))
     return redirect("projects:projects_overview")

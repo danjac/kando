@@ -51,9 +51,7 @@ def create_card(request, project_id, column_id=None):
 @login_required
 def card_detail(request, card_id):
     card = get_object_or_404(
-        Card.objects.filter(project__owner=request.user).select_related(
-            "project", "column"
-        ),
+        Card.objects.accessible_to(request.user).select_related("project", "column"),
         pk=card_id,
     )
     return TemplateResponse(request, "cards/detail.html", {"card": card})
@@ -62,8 +60,7 @@ def card_detail(request, card_id):
 @login_required
 def edit_card(request, card_id):
     card = get_object_or_404(
-        Card.objects.filter(project__owner=request.user).select_related("project"),
-        pk=card_id,
+        Card.objects.accessible_to(request.user).select_related("project"), pk=card_id,
     )
     if request.method == "POST":
         form = CardForm(request.POST, instance=card)
@@ -83,8 +80,7 @@ def edit_card(request, card_id):
 @require_POST
 def delete_card(request, card_id):
     card = get_object_or_404(
-        Card.objects.filter(project__owner=request.user).select_related("project"),
-        pk=card_id,
+        Card.objects.accessible_to(request.user).select_related("project"), pk=card_id,
     )
     card.delete()
     messages.info(request, _("Card has been deleted"))
