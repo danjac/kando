@@ -2,6 +2,22 @@
 
 @tailwind components;
 
+.form-input {
+  @apply appearance-none rounded border placeholder-opacity-50;
+}
+
+.form-input:focus {
+  @apply outline-none ring-2;
+}
+
+.form-input-error {
+  @apply text-red-800 placeholder-red-800 border-red-800;
+}
+
+.form-input-error:focus {
+  @apply ring-red-200;
+}
+
 .message {
   @apply text-white;
 }

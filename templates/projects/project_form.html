@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-3">
+  {% translate project|yesno:"Edit Project,New Project" %}
+</h1>
+<form class="p-2 bg-white border rounded"
+      data-controller="form"
+      data-action="form#submit"
+      method="post"
+      action="{{ request.path }}"
+      novalidate>
+  {% csrf_token %}
+  {% with WIDGET_ERROR_CLASS="form-input-error" widget_class="form-input text-lg p-2 w-full" label_class="text-lg mb-1 font-semibold" %}
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.name.label }}
+      {% render_field form.name class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.name.errors %}
+  </div>
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.description.label }}
+      {% render_field form.description class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.description.errors %}
+  </div>
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {% translate "Private Project?" %}
+      {% render_field form.is_private class="ml-3" %}
+    </label>
+    <p class="italic text-gray-500">{% translate "A private project does not have other users or groups" %}</p>
+  </div>
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.task_limit.label }}
+      {% render_field form.task_limit class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.task_limit.errors %}
+    <p class="italic text-gray-500">{% translate "The maximum number of tasks allowed per column. If 0 then there is no set limit." %}</p>
+  </div>
+  {% endwith %}
+  <div class="flex justify-end">
+    <button type="submit"
+            class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
+      {% translate project|yesno:"Save Project,Create Project" %}
+    </button>
+  </div>
+</form>
+{% endblock %}

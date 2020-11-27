@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n pagination %}
+
+{% block content %}
+
+<div class="sm:flex items-center justify-between mb-3">
+  <h1 class="text-xl font-bold mb-3 sm:mb-0">{% translate "Projects Overview" %}</h1>
+  <a href="{% url 'projects:create_project' %}"
+     class="px-4 py-1 rounded border bg-white hover:bg-gray-100">
+    <i class="fa fa-plus mr-2"></i>{% translate "New Project" %}
+  </a>
+</div>
+
+{% paginate projects as page_obj %}
+<table class="table-fixed border p-3 w-full bg-white rounded">
+  {% if projects %}
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="w-1/2 p-2">{% translate "Project" %}</th>
+      <th class="w-1/4 p-2">{% translate "Owner" %}</th>
+      <th class="w-1/4 p-2"></th>
+    </tr>
+  </thead>
+  {% endif %}
+  <tbody>
+    {% for project in page_obj %}
+    <tr class="{% cycle 'bg-white' 'bg-gray-100' %} hover:bg-blue-100">
+      <td class="p-2 border-r">
+        <a href=""
+           class="text-blue-800 hover:text-blue-600">{{ project.name }}</a>
+      </td>
+      <td class="p-2 border-r">
+        <a href="">{{ project.owner }}</a>
+      </td>
+      <td class="p-2 flex justify-end">
+        <a href=""
+           class="text-blue-800 hover:text-blue-600 mr-2">Edit</a>
+        <a href=""
+           class="text-blue-800 hover:text-blue-600">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="3"
+          class="flex justify-center w-full p-2">{% translate "You don't have any projects yet" %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% include "_pagination.html" %}
+{% endblock content %}
