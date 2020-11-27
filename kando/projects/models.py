@@ -33,7 +33,18 @@ class ProjectManager(models.Manager.from_queryset(ProjectQuerySet)):
 class Project(TimeStampedModel):
 
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="owned_projects",
+    )
+
+    members = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through="ProjectMember",
+        blank=True,
+        related_name="projects",
     )
 
     name = models.CharField(max_length=200)
@@ -53,3 +64,21 @@ class Project(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse("projects:project_board", args=[self.id])
+
+
+class ProjectMember(TimeStampedModel):
+    class Role(models.TextChoices):
+        # add tasks, edit/move own tasks, assign myself to tasks
+        MEMBER = "member", _("Member")
+        # edit others' tasks, assign tasks
+        MANAGER = "manager", _("Manager")
+        # add users to project, change columns, change permissions, edit project, delete project
+        # owner has all these permissions by default
+        ADMIN = "admin", _("Admin")
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    role = models.CharField(
+        choices=Role.choices, max_length=12, default=Role.MEMBER, db_index=True
+    )
+    is_active = models.BooleanField(default=True)
