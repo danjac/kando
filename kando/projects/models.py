@@ -7,7 +7,11 @@ from model_utils.models import TimeStampedModel
 
 
 class Project(TimeStampedModel):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
+    )
+
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -15,8 +19,8 @@ class Project(TimeStampedModel):
     is_active = models.BooleanField(default=True)
     task_limit = models.IntegerField(default=0)
 
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.name

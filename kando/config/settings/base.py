@@ -49,6 +49,7 @@ ROOT_URLCONF = "kando.config.urls"
 WSGI_APPLICATION = "kando.config.wsgi.application"
 
 LOCAL_APPS = [
+    "kando.cards.apps.CardsConfig",
     "kando.columns.apps.ColumnsConfig",
     "kando.projects.apps.ProjectsConfig",
     "kando.swimlanes.apps.SwimlanesConfig",
