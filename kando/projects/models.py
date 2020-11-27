@@ -1,9 +1,24 @@
 # Django
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext as _
 
 # Third Party Libraries
 from model_utils.models import TimeStampedModel
+
+
+class ProjectManager(models.Manager):
+    def create_project(self, name, owner, **kwargs):
+        """Creates a new project with default columns """
+
+        project = self.create(name=name, owner=owner, **kwargs)
+
+        for position, name in enumerate(
+            (_("Backlog"), _("Ready"), ("In Progress"), _("Done")), 1
+        ):
+            project.column_set.create(name=name, position=position)
+
+        return project
 
 
 class Project(TimeStampedModel):
@@ -21,6 +36,8 @@ class Project(TimeStampedModel):
 
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+
+    objects = ProjectManager()
 
     def __str__(self):
         return self.name
