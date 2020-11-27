@@ -5,24 +5,29 @@
 
 <div class="sm:flex items-center justify-between mb-3">
   <h1 class="text-xl font-bold mb-3 sm:mb-0">{{ project.name }}</h1>
-  <div class="flex items-center">
-  <a href=""
-     class="px-4 py-1 rounded border bg-white hover:bg-gray-100 mr-2">
-    <i class="fa fa-plus mr-2"></i>{% translate "Add Column" %}
-  </a>
-  <a href="{% url 'projects:edit_project' project.id %}"
-     class="px-4 py-1 rounded border bg-white hover:bg-gray-100">
-    <i class="fa fa-pen mr-2"></i>{% translate "Edit Project" %}
-  </a>
-</div>
+  <div class="sm:flex items-center">
+    <a href=""
+       class="px-4 py-1 rounded border bg-white hover:bg-gray-100 sm:mr-2 mb-1 sm:mb-0 block w-full sm:w-auto">
+      <i class="fa fa-plus mr-2"></i>{% translate "Add Card" %}
+    </a>
+    <a href=""
+       class="px-4 py-1 rounded border bg-white hover:bg-gray-100 sm:mr-2 mb-1 sm:m-0 block w-full sm:w-auto">
+      <i class="fa fa-plus mr-2"></i>{% translate "Add Column" %}
+    </a>
+    <a href="{% url 'projects:edit_project' project.id %}"
+       class="px-4 py-1 rounded border bg-white hover:bg-gray-100 block w-full sm:w-auto">
+      <i class="fa fa-pen mr-2"></i>{% translate "Edit Project" %}
+    </a>
+  </div>
 </div>
 
-<div class="flex items-center overflow-x-auto whitespace-no-wrap border-t border-b">
+<div class="md:flex items-center md:overflow-x-auto md:whitespace-no-wrap">
   {% for column in columns %}
-  <div class="w-1/4 border-r min-h-64 {% if forloop.first %} border-l{% endif %}">
-    <div class="bg-gray-100 flex items-center justify-center font-bold text-lg p-2">
+  <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border min-h-64">
+    <div class="bg-gray-100 flex items-center justify-start md:justify-center font-bold text-lg p-2">
       {{ column.name }}
-      <button class="ml-2 focus:outline-none" title="Add New Card">
+      <button class="ml-2 focus:outline-none"
+              title="Add New Card">
         <i class="fa fa-plus"></i>
       </button>
     </div>
