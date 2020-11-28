@@ -1,7 +1,11 @@
 # Django
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+
+# Kando
+from kando.projects.models import ProjectMember
 
 
 class UserQuerySet(models.QuerySet):
@@ -62,3 +66,20 @@ class User(AbstractUser):
         return set([self.email]) | set(
             self.emailaddress_set.values_list("email", flat=True)
         )
+
+    @cached_property
+    def roles(self):
+        """Return projects I own/belong to as dict of {project_id: role}"""
+        return {
+            m.project_id: m.role
+            for m in ProjectMember.objects.filter(user=self, is_active=True)
+        }
+
+    def is_member(self, project):
+        return project.id in self.roles
+
+    def is_manager(self, project):
+        return self.roles.get(project.id) == ProjectMember.Role.MANAGER
+
+    def is_admin(self, project):
+        return self.roles.get(project.id) == ProjectMember.Role.ADMIN

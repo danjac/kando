@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n rules %}
 
 {% block content %}
 <div class="text-sm flex items-center mb-3">
@@ -12,6 +12,9 @@
   </a>
 </div>
 
+{% has_perm "projects.change_project" user project as can_change_project %}
+{% has_perm "projects.delete_project" user project as can_delete_project %}
+
 <div class="sm:flex items-center justify-between mb-3">
   <h1 class="text-xl font-bold mb-3 sm:mb-0">{{ project.name }}</h1>
   <div class="sm:flex items-center">
@@ -23,10 +26,18 @@
        class="px-4 py-1 rounded border bg-white hover:bg-gray-100 sm:mr-2 mb-1 sm:m-0 block w-full sm:w-auto">
       <i class="fa fa-plus mr-2"></i>{% translate "Add Column" %}
     </a>
+    {% if can_change_project %}
     <a href="{% url 'projects:edit_project' project.id %}"
-       class="px-4 py-1 rounded border bg-white hover:bg-gray-100 block w-full sm:w-auto">
+       class="px-4 py-1 rounded border bg-white hover:bg-gray-100 block w-full sm:w-auto mr-2">
       <i class="fa fa-pen mr-2"></i>{% translate "Edit Project" %}
     </a>
+    {% endif %}
+    {% if can_delete_project %}
+    <button class="px-4 py-1 rounded border bg-white hover:bg-red-100 block w-full sm:w-auto border-red-800 text-red-800">
+      <i class="fa fa-trash mr-2"></i>{% translate "Delete Project" %}
+    </button>
+    {% endif %}
+
   </div>
 </div>
 

@@ -1,6 +1,7 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -37,9 +38,11 @@ def create_project(request):
 
 @login_required
 def edit_project(request, project_id):
-    project = get_object_or_404(
-        Project.objects.accessible_to(request.user), pk=project_id
-    )
+    project = get_object_or_404(Project, pk=project_id)
+
+    if not request.user.has_perm("projects.change_project", project):
+        raise PermissionDenied
+
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
@@ -56,9 +59,11 @@ def edit_project(request, project_id):
 @login_required
 @require_POST
 def delete_project(request, project_id):
-    project = get_object_or_404(
-        Project.objects.accessible_to(request.user), pk=project_id
-    )
+    project = get_object_or_404(Project, pk=project_id)
+
+    if not request.user.has_perm("projects.delete_project", project):
+        raise PermissionDenied
+
     project.delete()
     messages.info(request, _("Your project has been deleted"))
     return redirect("projects:projects_overview")
