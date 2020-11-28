@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block content %}
+<div class="text-sm flex items-center mb-3">
+  <a href="{% url 'projects:projects_overview' %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{{ project.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ project.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{% url 'projects:project_members' project.id %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {% translate "Users and Permissions" %}
+  </a>
+  <span class="text-gray-500">{% translate "Invite New Users" %}</span>
+</div>
+
+<h1 class="text-xl font-bold mb-3">
+  {% translate "Invite New Users" %}
+</h1>
+<form class="p-2 bg-white border rounded"
+      data-controller="form"
+      data-action="form#submit"
+      method="post"
+      action="{{ request.path }}"
+      novalidate>
+  {% csrf_token %}
+  {% with WIDGET_ERROR_CLASS="form-input-error" widget_class="form-input text-lg p-2 w-full" label_class="text-lg mb-1 font-semibold" %}
+  <div class="mb-3">
+    <label class="{{ label_class }}">
+      {{ form.email.label }}
+      {% render_field form.emails class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.emails.errors %}
+    {% if not form.emails.errors %}
+    <p class="text-gray-500 italic">
+      {% translate "Enter one email address per line" %}
+    </p>
+    {% endif %}
+  </div>
+  {% endwith %}
+  <div class="flex justify-end items-center">
+    <a href="{% url 'projects:project_members' project.id %}"
+       class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
+    <button type="submit"
+            class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
+      {% translate "Send Invites" %}
+    </button>
+  </div>
+</form>
+{% endblock %}

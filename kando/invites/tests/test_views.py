@@ -15,6 +15,11 @@ from ..factories import InviteFactory
 pytestmark = pytest.mark.django_db
 
 
+class TestSendInvites:
+    def test_send_invites(self, client, login_user):
+        ...
+
+
 class TestAcceptInvite:
     def test_accept_project_member(self, client, login_user):
         invite = InviteFactory(email=login_user.email)

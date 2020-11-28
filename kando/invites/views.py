@@ -15,6 +15,7 @@ from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
 
 # Local
+from .emails import send_invite_email
 from .forms import InviteForm
 from .models import Invite
 
@@ -27,17 +28,19 @@ def send_invites(request, project_id):
     if request.method == "POST":
         form = InviteForm(request.POST, project=project)
         if form.is_valid():
-            invites = form.save()
-            # send emails out...
+            invites = form.save(request.user)
+            for invite in invites:
+                send_invite_email(invite)
             messages.success(
-                _("You have sent %(num_invites)s invites")
-                % {"num_invites": len(invites)}
+                request,
+                _("You have sent %(num_invites)s invite(s)")
+                % {"num_invites": len(invites)},
             )
             return redirect("projects:project_members", project.id)
     else:
         form = InviteForm(project=project)
     return TemplateResponse(
-        request, "projects/invite_form.html", {"form": form, "project": project}
+        request, "invites/invite_form.html", {"form": form, "project": project}
     )
 
 

@@ -1,0 +1,7 @@
+Hi,
+
+You have been invited to join the project {{ project.name }}
+
+Please click the link below or copy it into your browser navigation bar:
+
+{{ accept_url }}
