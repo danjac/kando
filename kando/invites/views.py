@@ -9,14 +9,14 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils.functional import gettext as _
+from django.utils.translation import gettext as _
 
 # Kando
 from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
 
 # Local
-from .forms import ProjectInviteForm
+from .forms import InviteForm
 from .models import Invite
 
 
@@ -26,7 +26,7 @@ def send_invites(request, project_id):
     has_perm_or_403(request.user, "projects.manage_users", project)
 
     if request.method == "POST":
-        form = ProjectInviteForm(request.POST, project=project)
+        form = InviteForm(request.POST, project=project)
         if form.is_valid():
             invites = form.save()
             # send emails out...
@@ -36,7 +36,7 @@ def send_invites(request, project_id):
             )
             return redirect("projects:project_members", project.id)
     else:
-        form = ProjectInviteForm(project=project)
+        form = InviteForm(project=project)
     return TemplateResponse(
         request, "projects/invite_form.html", {"form": form, "project": project}
     )
