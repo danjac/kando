@@ -6,10 +6,9 @@
   <a href="{% url 'projects:projects_overview' %}"
      class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
   <span class="text-gray-500 mr-2">&gt;</span>
-  <a href="{{ project.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-2">
+  <span class="text-gray-500">
     {{ project.name }}
-  </a>
+  </span>
 </div>
 
 {% has_perm "projects.change_project" user project as can_change_project %}
@@ -47,6 +46,7 @@
          class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
         <i class="fa fa-users mr-2"></i>{% translate "Users and Permissions" %}
       </a>
+
       {% if can_delete_project %}
       <button data-controller="ajax"
               data-ajax-confirm="{% translate 'Are you sure you want to delete this project?' %}"

@@ -17,7 +17,7 @@
 </div>
 <div class="flex items-center justify-between mb-3">
   <h1 class="text-xl font-bold">{% translate "Users and Permissions" %}</h1>
-  {% has_perm "projects:add_members" user project as can_add_members %}
+  {% has_perm "projects.add_members" user project as can_add_members %}
   {% if can_add_members %}
   <a href="{% url 'invites:send_invites' project.id %}"
      class="px-4 py-1 rounded border hover:bg-gray-100">
@@ -62,6 +62,8 @@
       </td>
       <td class="p-2 font-semibold">
         {{ member.get_role_display }}
+      </td>
+      <td class="p-2">
       </td>
     </tr>
     {% endfor %}
