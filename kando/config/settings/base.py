@@ -54,6 +54,7 @@ LOCAL_APPS = [
     "kando.invites.apps.InvitesConfig",
     "kando.projects.apps.ProjectsConfig",
     "kando.swimlanes.apps.SwimlanesConfig",
+    "kando.tasks.apps.TasksConfig",
     "kando.users.apps.UsersConfig",
 ]
 
