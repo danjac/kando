@@ -81,3 +81,17 @@ def project_board(request, project_id):
         "projects/board.html",
         {"project": project, "columns": columns, "cards": cards},
     )
+
+
+@login_required
+def project_members(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    has_perm_or_403(request.user, "projects.view_project", project)
+
+    members = project.projectmember_set.select_related("user", "project").order_by(
+        "user__name", "user__username"
+    )
+
+    return TemplateResponse(
+        request, "projects/members.html", {"project": project, "members": members}
+    )
