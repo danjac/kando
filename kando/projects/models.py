@@ -84,3 +84,8 @@ class ProjectMember(TimeStampedModel):
         choices=Role.choices, max_length=12, default=Role.MEMBER, db_index=True
     )
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint("unique_project_member", fields=["project", "user"])
+        ]

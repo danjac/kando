@@ -26,4 +26,5 @@ is_project_owner_or_admin = is_project_owner | is_project_admin
 
 rules.add_perm("projects.view_project", is_project_owner | is_project_member)
 rules.add_perm("projects.change_project", is_project_owner_or_admin)
+rules.add_perm("projects.manage_users", is_project_owner_or_admin)
 rules.add_perm("projects.delete_project", is_project_owner)

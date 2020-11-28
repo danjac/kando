@@ -29,7 +29,8 @@
   <thead>
     <tr class="bg-gray-100">
       <th class="w-1/2 p-2">{% translate "User" %}</th>
-      <th class="w-1/2 p-2">{% translate "Role" %}</th>
+      <th class="w-1/4 p-2">{% translate "Role" %}</th>
+      <th class="w-1/4 p-2">{% translate "Actions" %}</th>
     </tr>
   </thead>
   <tbody>
@@ -41,8 +42,10 @@
           {% user_display project.owner %}
         </a>
       </td>
-      <td class="p-2 font-semibold">
+      <td class="p-2 border-r font-semibold">
         {% translate "Owner" %}
+      </td>
+      <td class="p-2">
       </td>
     </tr>
     {% endif %}
