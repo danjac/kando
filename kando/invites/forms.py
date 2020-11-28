@@ -34,7 +34,7 @@ class InviteForm(forms.Form):
                     _("Email address %(email)s is invalid"), params={"email": email}
                 ) from e
 
-            if self.project.owner.email == email:
+            if self.project.owner.email.lower() == email:
                 raise forms.ValidationError(
                     _("Email address %(email)s is already a member of this project"),
                     params={"email": email},
@@ -43,7 +43,7 @@ class InviteForm(forms.Form):
         invites = self.project.invite_set.filter(email__in=emails).iterator()
 
         for invite in invites:
-            if invite.email in emails:
+            if invite.email.lower() in emails:
                 raise forms.ValidationError(
                     _(
                         "Email address %(email)s has already been invited to this project"
@@ -54,7 +54,7 @@ class InviteForm(forms.Form):
         members = self.project.members.filter(email__in=emails).iterator()
 
         for member in members:
-            if member.email in emails:
+            if member.email.lower() in emails:
                 raise forms.ValidationError(
                     _("Email address %(email)s is already a member of this project"),
                     params={"email": member.email},
