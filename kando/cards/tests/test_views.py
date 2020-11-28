@@ -112,7 +112,7 @@ class TestMoveCards:
             data=json.dumps(data),
             content_type="application/json",
         )
-        assert response.status_code == 204
+        assert response.status_code == 403
         assert Card.objects.filter(column=new_column).count() == 0
 
     def test_post_if_exceeds_limit(self, client, login_user):

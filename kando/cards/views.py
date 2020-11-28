@@ -104,7 +104,9 @@ def move_cards(request, column_id):
 
     for position, card_id in enumerate(card_ids, 1):
         card = cards.get(card_id)
-        if card and request.user.has_perm("cards.change_card", card):
+        if card:
+            # raise a 403 error if user tries to move a card without permission
+            has_perm_or_403(request.user, "cards.change_card", card)
             card.position = position
             card.column_id = column_id
             for_update.append(card)

@@ -5,8 +5,10 @@ import Sortable from 'sortablejs';
 export default class extends Controller {
   static targets = ['draggable'];
   connect() {
+    // set put: false to prevent
     this.sortable = Sortable.create(this.element, {
       animation: 150,
+      draggable: '.item',
       group: this.data.get('group') || 'shared',
       onAdd: this.add.bind(this),
       onRemove: this.remove.bind(this),
