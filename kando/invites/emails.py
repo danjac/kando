@@ -6,8 +6,12 @@ from django.utils.translation import gettext as _
 # from django.utils.translation import override
 
 
-def send_invite_email(invite):
-    context = {"invite": invite, "project": invite.project, "accept_url": ""}
+def send_invite_email(invite, accept_url):
+    context = {
+        "invite": invite,
+        "project": invite.project,
+        "accept_url": accept_url,
+    }
     send_mail(
         _("You have been invited to join our project!"),
         render_to_string("invites/emails/invite.txt", context),

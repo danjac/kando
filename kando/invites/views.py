@@ -30,7 +30,12 @@ def send_invites(request, project_id):
         if form.is_valid():
             invites = form.save(request.user)
             for invite in invites:
-                send_invite_email(invite)
+                send_invite_email(
+                    invite,
+                    accept_url=request.build_absolute_uri(
+                        reverse("invites:accept_invite", args=[invite.guid])
+                    ),
+                )
             messages.success(
                 request,
                 _("You have sent %(num_invites)s invite(s)")
