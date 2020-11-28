@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
-from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -44,7 +43,7 @@ def send_invites(request, project_id):
 
 def accept_invite(request, invite_id):
     invite = get_object_or_404(
-        Invite.objects.filter(accepted__isnull=True).select_related("project", "user"),
+        Invite.objects.filter(accepted__isnull=True).select_related("project"),
         pk=invite_id,
     )
 
@@ -58,7 +57,7 @@ def accept_invite(request, invite_id):
             try:
                 invite.accept(request.user)
                 messages.success(request, _("You have joined this project"))
-            except IntegrityError:
+            except Invite.AlreadyMember:
                 messages.error(request, _("You are already a member of this project"))
             return redirect(invite.project)
         else:

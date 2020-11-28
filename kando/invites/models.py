@@ -14,6 +14,8 @@ from kando.projects.models import Project, ProjectMember
 
 
 class Invite(TimeStampedModel):
+    class AlreadyMember(ValueError):
+        ...
 
     guid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -45,8 +47,11 @@ class Invite(TimeStampedModel):
         return self.guid
 
     def accept(self, user):
-        # check IntegrityError
+        if ProjectMember.objects.filter(user=user, project=self.project).exists():
+            raise self.AlreadyMember
+
         ProjectMember.objects.create(user=user, project=self.project)
+
         self.accepted = timezone.now()
         self.invitee = user
         self.save()
