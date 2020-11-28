@@ -23,7 +23,7 @@ from .models import Invite
 @login_required
 def send_invites(request, project_id):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
-    has_perm_or_403(request.user, "projects.manage_users", project)
+    has_perm_or_403(request.user, "projects.add_members", project)
 
     if request.method == "POST":
         form = InviteForm(request.POST, project=project)

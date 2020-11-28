@@ -6,7 +6,7 @@ from django.urls import reverse
 import pytest
 
 # Kando
-from kando.projects.factories import ProjectMemberFactory
+from kando.projects.factories import ProjectFactory, ProjectMemberFactory
 from kando.users.factories import UserFactory
 
 # Local
@@ -16,8 +16,21 @@ pytestmark = pytest.mark.django_db
 
 
 class TestSendInvites:
-    def test_send_invites(self, client, login_user):
-        ...
+    def test_send_invites(self, client, login_user, mailoutbox):
+        data = {
+            "emails": """
+            example1@example.com
+            example2@example.com
+            """
+        }
+        project = ProjectFactory(owner=login_user)
+        response = client.post(reverse("invites:send_invites", args=[project.id]), data)
+        assert response.url == reverse("projects:project_members", args=[project.id])
+
+        assert project.invite_set.count() == 2
+        assert len(mailoutbox) == 2
+        assert mailoutbox[0].to == ["example1@example.com"]
+        assert mailoutbox[1].to == ["example2@example.com"]
 
 
 class TestAcceptInvite:
