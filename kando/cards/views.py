@@ -69,7 +69,9 @@ def edit_card(request, card_id):
         form = CardForm(instance=card)
 
     return TemplateResponse(
-        request, "cards/card_form.html", {"card": card, "form": form}
+        request,
+        "cards/card_form.html",
+        {"card": card, "form": form, "project": card.project},
     )
 
 
