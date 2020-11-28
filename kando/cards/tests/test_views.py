@@ -102,6 +102,19 @@ class TestMoveCards:
         assert response.status_code == 204
         assert Card.objects.filter(column=new_column).count() == 12
 
+    def test_post_if_no_permission(self, client, login_user):
+        project = ProjectFactory()
+        cards = CardFactory.create_batch(12, project=project)
+        new_column = ColumnFactory(project=project)
+        data = {"items": [card.id for card in cards]}
+        response = client.post(
+            reverse("cards:move_cards", args=[new_column.id]),
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        assert response.status_code == 204
+        assert Card.objects.filter(column=new_column).count() == 0
+
     def test_post_if_exceeds_limit(self, client, login_user):
         project = ProjectFactory(owner=login_user, task_limit=6)
         cards = CardFactory.create_batch(12, project=project)
