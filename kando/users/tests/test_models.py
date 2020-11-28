@@ -2,6 +2,10 @@
 import pytest
 from allauth.account.models import EmailAddress
 
+# Kando
+from kando.projects.factories import ProjectMemberFactory
+from kando.projects.models import ProjectMember
+
 # Local
 from ..factories import UserFactory
 
@@ -59,3 +63,32 @@ class TestUserModel:
         emails = user.get_email_addresses()
         assert user.email in emails
         assert "test1@gmail.com" in emails
+
+    def test_roles(self, user):
+
+        member_1 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MEMBER)
+        member_2 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MANAGER)
+        member_3 = ProjectMemberFactory(user=user, role=ProjectMember.Role.ADMIN)
+
+        member_4 = ProjectMemberFactory()
+
+        assert user.roles[member_1.project_id] == ProjectMember.Role.MEMBER
+        assert user.roles[member_2.project_id] == ProjectMember.Role.MANAGER
+        assert user.roles[member_3.project_id] == ProjectMember.Role.ADMIN
+
+        assert member_4.project_id not in user.roles
+
+        assert user.is_member(member_1.project)
+        assert user.is_member(member_2.project)
+        assert user.is_member(member_3.project)
+        assert not user.is_member(member_4.project)
+
+        assert not user.is_manager(member_1.project)
+        assert user.is_manager(member_2.project)
+        assert not user.is_manager(member_3.project)
+        assert not user.is_manager(member_4.project)
+
+        assert not user.is_admin(member_1.project)
+        assert not user.is_admin(member_2.project)
+        assert user.is_admin(member_3.project)
+        assert not user.is_admin(member_4.project)

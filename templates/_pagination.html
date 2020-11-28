@@ -1,6 +1,4 @@
-
-{% load i18n %}
-{% load pagination %}
+{% load i18n pagination %}
 {% if page_obj.has_other_pages %}
 <div class="text-sm flex justify-between {{ css_class|default:"mt-2" }}">
   <a {% if page_obj.has_previous %}
