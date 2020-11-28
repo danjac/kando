@@ -71,9 +71,11 @@ def delete_project(request, project_id):
 
 @login_required
 def project_board(request, project_id):
-    project = get_object_or_404(
-        Project.objects.accessible_to(request.user), pk=project_id
-    )
+    project = get_object_or_404(Project, pk=project_id)
+
+    if not request.user.has_perm("projects.view_project", project):
+        raise PermissionDenied
+
     columns = project.column_set.order_by("position")
     cards = project.card_set.order_by("position").select_related(
         "project", "owner", "column"
