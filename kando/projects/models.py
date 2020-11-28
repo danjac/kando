@@ -87,5 +87,7 @@ class ProjectMember(TimeStampedModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint("unique_project_member", fields=["project", "user"])
+            models.UniqueConstraint(
+                name="unique_project_member", fields=["project", "user"]
+            )
         ]
