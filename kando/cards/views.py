@@ -55,7 +55,11 @@ def card_detail(request, card_id):
         pk=card_id,
     )
     has_perm_or_403(request.user, "cards.view_card", card)
-    return TemplateResponse(request, "cards/detail.html", {"card": card})
+
+    tasks = card.task_set.select_related("card", "owner").order_by("position")
+    return TemplateResponse(
+        request, "cards/detail.html", {"card": card, "tasks": tasks}
+    )
 
 
 @login_required

@@ -76,12 +76,11 @@
     <div class="p-2 bg-white"
          data-controller="drag"
          data-drag-group="shared"
-         data-drag-limit="{{ project.task_limit }}"
          data-drag-url="{% url 'cards:move_cards' column.id %}">
       {% for card in cards %}
       {% if card.column == column %}
       {% has_perm "cards.move_card" user card as can_move_card %}
-      <div class="p-2 mb-3 border rounded bg-blue-500 text-white{% if can_move_card %} item{% endif %}"
+      <div class="p-2 mb-3 border rounded bg-blue-500 text-white{% if can_move_card %} draggable{% endif %}"
            {% spaceless %}
            {% if can_move_card %}
            data-id="{{ card.id }}"

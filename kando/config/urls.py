@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path("", include("kando.projects.urls")),
     path("cards/", include("kando.cards.urls")),
+    path("tasks/", include("kando.tasks.urls")),
     path("invites/", include("kando.invites.urls")),
     path("account/", include("allauth.urls")),
     path(settings.ADMIN_URL, admin.site.urls),

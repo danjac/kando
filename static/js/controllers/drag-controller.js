@@ -8,7 +8,7 @@ export default class extends Controller {
     // set put: false to prevent
     this.sortable = Sortable.create(this.element, {
       animation: 150,
-      draggable: '.item',
+      draggable: '.draggable',
       group: this.data.get('group') || 'shared',
       onAdd: this.add.bind(this),
       onRemove: this.remove.bind(this),
@@ -29,13 +29,8 @@ export default class extends Controller {
     this.draggableTargets.forEach((target) => {
       items.push(target.dataset.id);
     });
-    if (this.limit && items.length > this.limit) {
-      return false;
+    if (this.data.has('url')) {
+      axios.post(this.data.get('url'), { items });
     }
-    axios.post(this.data.get('url'), { items });
-  }
-
-  get limit() {
-    return parseInt(this.data.get('limit') || 0);
   }
 }

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block content %}
+<div class="text-sm flex items-center mb-3">
+  <a href="{% url 'projects:projects_overview' %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{{ card.project.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ card.project.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{{ card.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ card.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <span class="text-gray-500">
+    {% if task %}
+    {% translate "Edit Task" %}
+    {% else %}
+    {% translate "New Task" %}
+    {% endif %}
+  </span>
+</div>
+
+<h1 class="text-xl font-bold mb-3">
+  {% if task %}
+  {% translate "Edit Task" %}
+  {% else %}
+  {% translate "New Task" %}
+  {% endif %}
+</h1>
+<form class="p-2 bg-white border rounded"
+      data-controller="form"
+      data-action="form#submit"
+      method="post"
+      action="{{ request.path }}"
+      novalidate>
+  {% csrf_token %}
+  {% with WIDGET_ERROR_CLASS="form-input-error" %}
+  <div class="mb-3">
+    <label class="text-lg mb-1 font-semibold">
+      {% render_field form.description placeholder=form.description.label class="form-input text-lg p-2 w-full" %}
+    </label>
+    {% include "_form_errors.html" with errors=form.description.errors %}
+  </div>
+  {% endwith %}
+  <div class="flex justify-end items-center">
+    <a href="{{ card.get_absolute_url }}"
+       class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
+    <button type="submit"
+            class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
+      {% if card %}
+      {% translate "Save Task" %}
+      {% else %}
+      {% translate "Create Task" %}
+      {% endif %}
+    </button>
+  </div>
+</form>
+
+{% endblock content %}

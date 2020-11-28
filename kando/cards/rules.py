@@ -47,6 +47,9 @@ is_card_manager = (
     | is_card_project_owner
 )
 
+is_card_owner_or_assignee = is_card_owner | is_card_assignee
+
+
 rules.add_perm(
     "cards.create_card", is_project_member | is_project_owner,
 )
