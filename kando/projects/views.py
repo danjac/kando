@@ -40,7 +40,7 @@ def create_project(request):
 
 @login_required
 def edit_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.change_project", project)
 
     if request.method == "POST":
@@ -59,7 +59,7 @@ def edit_project(request, project_id):
 @login_required
 @require_POST
 def delete_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.delete_project", project)
 
     project.delete()
@@ -69,7 +69,7 @@ def delete_project(request, project_id):
 
 @login_required
 def project_board(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.view_project", project)
 
     columns = project.column_set.order_by("position")
@@ -85,7 +85,7 @@ def project_board(request, project_id):
 
 @login_required
 def project_members(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.view_project", project)
 
     members = project.projectmember_set.select_related("user", "project").order_by(

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n account rules pagination %}
+
+{% block content %}
+<div class="text-sm flex items-center mb-3">
+  <a href="{% url 'projects:projects_overview' %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{{ project.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ project.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <span class="text-gray-500">
+    {% translate "Users and Permissions" %}
+  </span>
+</div>
+<div class="flex items-center justify-between mb-3">
+  <h1 class="text-xl font-bold">{% translate "Users and Permissions" %}</h1>
+  <a href=""
+     class="px-4 py-1 rounded border hover:bg-gray-100">
+    <i class="fa fa-envelope mr-2"></i>
+    {% translate "Invite New Users" %}
+  </a>
+</div>
+
+{% paginate members as page_obj %}
+<table class="table-fixed border p-3 w-full bg-white rounded">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="w-1/2 p-2">{% translate "User" %}</th>
+      <th class="w-1/2 p-2">{% translate "Role" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if project.owner %}
+    <tr class="bg-white">
+      <td class="p-2 border-r">
+        <a href=""
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display project.owner %}
+        </a>
+      </td>
+      <td class="p-2 font-semibold">
+        {% translate "Owner" %}
+      </td>
+    </tr>
+    {% endif %}
+    {% for member in page_obj %}
+    <tr class="{% cycle 'bg-gray-100' 'bg-white' %} hover:bg-blue-100">
+      <td class="p-2 border-r">
+        <a href=""
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display member.user %}
+        </a>
+      </td>
+      <td class="p-2 font-semibold">
+        {{ member.get_role_display }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
