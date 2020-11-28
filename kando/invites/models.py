@@ -26,6 +26,8 @@ class Invite(TimeStampedModel):
 
     invitee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
         related_name="accepted_invites",
     )
@@ -35,7 +37,7 @@ class Invite(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                "unique_project_invite", fields=["project", "email"]
+                name="unique_project_invite", fields=["project", "email"]
             )
         ]
 
