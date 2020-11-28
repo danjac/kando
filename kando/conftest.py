@@ -9,7 +9,7 @@ import pytest
 # Kando
 from kando.cards.factories import CardFactory
 from kando.columns.factories import ColumnFactory
-from kando.projects.factories import ProjectFactory
+from kando.projects.factories import ProjectFactory, ProjectMemberFactory
 from kando.users.factories import UserFactory
 
 
@@ -46,6 +46,11 @@ def login_user(client):
 @pytest.fixture
 def project(user):
     return ProjectFactory(owner=user)
+
+
+@pytest.fixture
+def member(project, login_user):
+    return ProjectMemberFactory(project=project, user=login_user)
 
 
 @pytest.fixture
