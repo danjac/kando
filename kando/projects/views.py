@@ -1,11 +1,13 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
+
+# Kando
+from kando.users.utils import has_perm_or_403
 
 # Local
 from .forms import ProjectCreationForm, ProjectForm
@@ -39,9 +41,7 @@ def create_project(request):
 @login_required
 def edit_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-
-    if not request.user.has_perm("projects.change_project", project):
-        raise PermissionDenied
+    has_perm_or_403(request.user, "projects.change_project", project)
 
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
@@ -60,9 +60,7 @@ def edit_project(request, project_id):
 @require_POST
 def delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-
-    if not request.user.has_perm("projects.delete_project", project):
-        raise PermissionDenied
+    has_perm_or_403(request.user, "projects.delete_project", project)
 
     project.delete()
     messages.info(request, _("Your project has been deleted"))
@@ -72,9 +70,7 @@ def delete_project(request, project_id):
 @login_required
 def project_board(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-
-    if not request.user.has_perm("projects.view_project", project):
-        raise PermissionDenied
+    has_perm_or_403(request.user, "projects.view_project", project)
 
     columns = project.column_set.order_by("position")
     cards = project.card_set.order_by("position").select_related(
