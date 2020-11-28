@@ -59,11 +59,21 @@
          data-drag-url="{% url 'cards:move_cards' column.id %}">
       {% for card in cards %}
       {% if card.column == column %}
-      <div class="p-2 mb-3 border rounded bg-blue-500 text-white h-12 item"
+      <div class="p-2 mb-3 border rounded bg-blue-500 text-white"
            data-id="{{ card.id }}"
            data-target="drag.draggable">
-        <a href="{{ card.get_absolute_url }}"
-           class="underline">{{ card.name }}</a>
+        <div class="mb-1">
+          <a href="{{ card.get_absolute_url }}"
+             class="underline font-bold">{{ card.name }}</a>
+        </div>
+        <div>
+          <span class="font-semibold"
+                title="{% translate 'Priority' %}">P {{ card.priority }}</span> /
+          <span class="font-semibold"
+                title="{% translate 'Complexity' %}">C {{ card.complexity }}</span> /
+          <span class="font-semibold"
+                title="{% translate 'Estimated Hours' %}">H {{ card.hours_estimated }}</span>
+        </div>
       </div>
       {% endif %}
       {% endfor %}
