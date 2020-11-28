@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
+from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -28,6 +29,7 @@ def invite_users(request, project_id):
         form = ProjectInviteForm(request.POST, project=project)
         if form.is_valid():
             invites = form.save()
+            # send emails out...
             messages.success(
                 _("You have sent %(num_invites)s invites")
                 % {"num_invites": len(invites)}
@@ -53,8 +55,11 @@ def accept_invite(request, invite_id):
 
     if user and request.user.is_authenticated:
         if request.user == user:
-            invite.accept(request.user)
-            messages.success(request, _("You have joined this project"))
+            try:
+                invite.accept(request.user)
+                messages.success(request, _("You have joined this project"))
+            except IntegrityError:
+                messages.error(request, _("You are already a member of this project"))
             return redirect(invite.project)
         else:
             # prevent deliberate or accidental hijack of invite

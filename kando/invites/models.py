@@ -10,7 +10,7 @@ from django.utils import timezone
 from model_utils.models import TimeStampedModel
 
 # Kando
-from kando.projects.models import Project
+from kando.projects.models import Project, ProjectMember
 
 
 class Invite(TimeStampedModel):
@@ -19,7 +19,16 @@ class Invite(TimeStampedModel):
 
     email = models.EmailField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL)
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_invites"
+    )
+
+    invitee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="accepted_invites",
+    )
 
     accepted = models.DateTimeField(null=True, blank=True)
 
@@ -34,6 +43,8 @@ class Invite(TimeStampedModel):
         return self.guid
 
     def accept(self, user):
+        # check IntegrityError
+        ProjectMember.objects.create(user=user, project=self.project)
         self.accepted = timezone.now()
-        self.user = user
+        self.invitee = user
         self.save()
