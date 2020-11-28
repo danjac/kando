@@ -49,7 +49,10 @@ def create_card(request, project_id, column_id=None):
 @login_required
 def card_detail(request, card_id):
     card = get_object_or_404(
-        Card.objects.select_related("project", "column", "project__owner"), pk=card_id,
+        Card.objects.select_related(
+            "project", "column", "project__owner", "assignee", "owner"
+        ),
+        pk=card_id,
     )
     has_perm_or_403(request.user, "cards.view_card", card)
     return TemplateResponse(request, "cards/detail.html", {"card": card})
@@ -58,7 +61,7 @@ def card_detail(request, card_id):
 @login_required
 def edit_card(request, card_id):
     card = get_object_or_404(
-        Card.objects.select_related("project", "project__owner"), pk=card_id,
+        Card.objects.select_related("project", "project__owner", "owner"), pk=card_id,
     )
     has_perm_or_403(request.user, "cards.change_card", card)
     if request.method == "POST":
@@ -102,15 +105,16 @@ def move_cards(request, column_id):
     if column.project.task_limit and len(card_ids) > column.project.task_limit:
         return HttpResponseBadRequest("Exceeds project task limit")
 
-    qs = column.project.card_set.select_related("project", "project__owner")
+    qs = column.project.card_set.select_related(
+        "project", "project__owner", "assignee", "owner"
+    )
     cards = qs.in_bulk()
     for_update = []
 
     for position, card_id in enumerate(card_ids, 1):
         card = cards.get(card_id)
         if card:
-            # raise a 403 error if user tries to move a card without permission
-            has_perm_or_403(request.user, "cards.change_card", card)
+            has_perm_or_403(request.user, "cards.move_card", card)
             card.position = position
             card.column_id = column_id
             for_update.append(card)

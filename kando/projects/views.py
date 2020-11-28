@@ -74,7 +74,7 @@ def project_board(request, project_id):
 
     columns = project.column_set.order_by("position")
     cards = project.card_set.order_by("position").select_related(
-        "project", "owner", "column"
+        "project", "owner", "column", "assignee"
     )
     return TemplateResponse(
         request,

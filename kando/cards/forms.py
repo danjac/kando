@@ -11,6 +11,7 @@ class CardForm(forms.ModelForm):
         model = Card
         fields = (
             "name",
+            "assignee",
             "description",
             "complexity",
             "priority",
@@ -28,6 +29,13 @@ class CardForm(forms.ModelForm):
             )
         self.project = project
         self.fields["column"].queryset = self.project.column_set.order_by("position")
+
+        users_qs = self.project.members.order_by("name", "username")
+
+        if users_qs.count() == 0:
+            del self.fields["assignee"]
+        else:
+            self.fields["assignee"].queryset = users_qs
 
     def clean_column(self):
         column = self.cleaned_data["column"]

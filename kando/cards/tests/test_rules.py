@@ -4,6 +4,7 @@ import pytest
 # Kando
 from kando.projects.factories import ProjectMemberFactory
 from kando.projects.models import ProjectMember
+from kando.users.factories import UserFactory
 
 # Local
 from ..factories import CardFactory
@@ -12,21 +13,31 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPermissions:
-    def test_project_owner(self, card):
+    def test_card_owner(self, card):
         assert card.owner.has_perm("cards.view_card", card)
         assert card.owner.has_perm("cards.change_card", card)
         assert card.owner.has_perm("cards.delete_card", card)
+        assert card.owner.has_perm("cards.move_card", card)
+
+    def test_card_assignee(self, card):
+        card = CardFactory(assignee=UserFactory())
+        assert card.assignee.has_perm("cards.view_card", card)
+        assert not card.assignee.has_perm("cards.change_card", card)
+        assert not card.assignee.has_perm("cards.delete_card", card)
+        assert card.assignee.has_perm("cards.move_card", card)
 
     def test_anonymous_user(self, anonymous_user, card):
         assert not anonymous_user.has_perm("cards.view_card", card)
         assert not anonymous_user.has_perm("cards.change_card", card)
         assert not anonymous_user.has_perm("cards.delete_card", card)
+        assert not anonymous_user.has_perm("cards.move_card", card)
 
     def test_non_member(self, user):
         card = CardFactory()
         assert not user.has_perm("cards.view_card", card)
         assert not user.has_perm("cards.change_card", card)
         assert not user.has_perm("cards.delete_card", card)
+        assert not user.has_perm("cards.move_card", card)
 
     def test_member(self, user):
         member = ProjectMemberFactory(user=user, role=ProjectMember.Role.MEMBER)
@@ -34,6 +45,7 @@ class TestPermissions:
         assert user.has_perm("cards.view_card", card)
         assert not user.has_perm("cards.change_card", card)
         assert not user.has_perm("cards.delete_card", card)
+        assert not user.has_perm("cards.move_card", card)
 
     def test_manager(self, user):
         member = ProjectMemberFactory(user=user, role=ProjectMember.Role.MANAGER)
@@ -41,6 +53,7 @@ class TestPermissions:
         assert user.has_perm("cards.view_card", card)
         assert user.has_perm("cards.change_card", card)
         assert user.has_perm("cards.delete_card", card)
+        assert user.has_perm("cards.move_card", card)
 
     def test_admin(self, user):
         member = ProjectMemberFactory(user=user, role=ProjectMember.Role.ADMIN)
@@ -48,3 +61,4 @@ class TestPermissions:
         assert user.has_perm("cards.view_card", card)
         assert user.has_perm("cards.change_card", card)
         assert user.has_perm("cards.delete_card", card)
+        assert user.has_perm("cards.move_card", card)

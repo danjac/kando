@@ -35,6 +35,11 @@ def is_card_project_owner(user, card):
     return is_project_owner(user, card.project)
 
 
+@rules.predicate
+def is_card_assignee(user, card):
+    return user.is_authenticated and card.assignee == user
+
+
 is_card_manager = (
     is_card_owner
     | is_card_project_manager
@@ -46,6 +51,9 @@ rules.add_perm(
     "cards.create_card", is_project_member | is_project_owner,
 )
 
-rules.add_perm("cards.view_card", is_card_project_member | is_card_project_owner)
+rules.add_perm(
+    "cards.view_card", is_card_project_member | is_card_project_owner | is_card_assignee
+)
 rules.add_perm("cards.change_card", is_card_manager)
+rules.add_perm("cards.move_card", is_card_manager | is_card_assignee)
 rules.add_perm("cards.delete_card", is_card_manager)

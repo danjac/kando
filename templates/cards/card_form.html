@@ -54,6 +54,13 @@
   </div>
   <div class="mb-3">
     <label class="{{ label_class }}">
+      {{ form.assignee.label }}
+      {% render_field form.assignee class=widget_class %}
+    </label>
+    {% include "_form_errors.html" with errors=form.assignee.errors %}
+  </div>
+   <div class="mb-3">
+    <label class="{{ label_class }}">
       {{ form.description.label }}
       {% render_field form.description class=widget_class %}
     </label>
