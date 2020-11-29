@@ -14,7 +14,7 @@ from kando.projects.models import Project
 
 
 def file_upload_path(instance, filename):
-    return f"project/{instance.card.project.id}/attachments/{filename}"
+    return f"project/{instance.project.id}/attachments/{filename}"
 
 
 class Attachment(TimeStampedModel):
