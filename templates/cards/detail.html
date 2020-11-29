@@ -18,17 +18,16 @@
 {% has_perm "cards.change_card" user card as can_change_card %}
 {% has_perm "cards.delete_card" user card as can_delete_card %}
 
-<div class="flex items-center justify-between mb-3">
-  <h1 class="text-xl font-bold">{{ card.name }}</h1>
+<div class="flex items-center mb-3">
   {% if can_create_card or can_change_card or can_delete_card %}
   <div class="relative"
        data-controller="toggle">
-    <button class="px-2 py-1 rounded border hover:bg-gray focus:outline-none text-lg"
+    <button class="px-2 py-1 rounded border hover:bg-gray focus:outline-none text-lg mr-3"
             title="Actions..."
             data-action="toggle#toggle">
       <i class="fa fa-bars"></i>
     </button>
-    <div class="rounded absolute hidden border shadow-xl z-50 opacity-100 p-2 mt-1 w-64 bg-white right-0"
+    <div class="rounded absolute hidden border shadow-xl z-50 opacity-100 p-2 mt-1 w-64 bg-white left-0"
          data-target="toggle.item"
          data-action="click@window->toggle#close keydown@window->toggle#close">
 
@@ -60,6 +59,7 @@
   </div>
   {% endif %}
 
+  <h1 class="text-xl font-bold">{{ card.name }}</h1>
 </div>
 
 <div class="flex items-center mb-3">

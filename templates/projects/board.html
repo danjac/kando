@@ -15,16 +15,15 @@
 {% has_perm "projects.delete_project" user project as can_delete_project %}
 {% has_perm "cards.create_card" user project as can_create_card %}
 
-<div class="flex items-center justify-between mb-3">
-  <h1 class="text-xl font-bold">{{ project.name }}</h1>
+<div class="flex items-center mb-3">
   <div class="relative"
        data-controller="toggle">
-    <button class="px-2 py-1 rounded border hover:bg-gray focus:outline-none text-lg"
+    <button class="px-2 py-1 rounded border hover:bg-gray focus:outline-none text-lg mr-3"
             title="Actions..."
             data-action="toggle#toggle">
       <i class="fa fa-bars"></i>
     </button>
-    <div class="rounded absolute hidden border shadow-xl z-50 opacity-100 p-2 mt-1 w-64 bg-white right-0"
+    <div class="rounded absolute hidden border shadow-xl z-50 opacity-100 p-2 mt-1 w-64 bg-white left-0"
          data-target="toggle.item"
          data-action="click@window->toggle#close keydown@window->toggle#close">
 
@@ -59,6 +58,7 @@
 
     </div>
   </div>
+  <h1 class="text-xl font-bold">{{ project.name }}</h1>
 
 </div>
 
