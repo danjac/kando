@@ -2,6 +2,10 @@
 
 @tailwind components;
 
+.markdown a {
+  @apply text-blue-800 hover:text-blue-600;
+}
+
 .message {
   @apply text-white;
 }

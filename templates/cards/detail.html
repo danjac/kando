@@ -72,8 +72,8 @@
 </div>
 
 {% if card.description %}
-<p class="bg-gray-100 rounded p-2">
-  {{ card.description|linebreaksbr }}
+<p class="mb-3 markdown">
+  {{ card.description|linebreaksbr|urlize }}
 </p>
 {% endif %}
 
