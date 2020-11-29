@@ -16,11 +16,6 @@ def is_card_project_member(user, card):
 
 
 @rules.predicate
-def is_card_owner(user, card):
-    return is_card_project_member(user, card) and user == card.owner
-
-
-@rules.predicate
 def is_card_project_manager(user, card):
     return is_project_manager(user, card.project)
 
@@ -33,6 +28,11 @@ def is_card_project_admin(user, card):
 @rules.predicate
 def is_card_project_owner(user, card):
     return is_project_owner(user, card.project)
+
+
+@rules.predicate
+def is_card_owner(user, card):
+    return user.is_authenticated and card.owner == user
 
 
 @rules.predicate

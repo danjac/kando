@@ -4,7 +4,6 @@ import json
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -32,10 +31,6 @@ def create_card(request, project_id, column_id=None):
             card = form.save(commit=False)
             card.owner = request.user
             card.project = project
-            # tbd: tidy this up later
-            card.position = (
-                card.column.card_set.aggregate(Max("position"))["position__max"] or 0
-            ) + 1
             card.save()
             messages.success(request, _("Your card has been added"))
             return redirect(card)
@@ -56,7 +51,10 @@ def card_detail(request, card_id):
     )
     has_perm_or_403(request.user, "cards.view_card", card)
 
-    tasks = card.task_set.select_related("card", "owner").order_by("position")
+    tasks = card.task_set.select_related(
+        "card", "owner", "card__owner", "card__assignee"
+    ).order_by("position")
+
     return TemplateResponse(
         request, "cards/detail.html", {"card": card, "tasks": tasks}
     )

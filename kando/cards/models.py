@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 # Third Party Libraries
+from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
 
 # Kando
@@ -67,8 +68,18 @@ class Card(TimeStampedModel):
 
     objects = CardManager()
 
+    tracker = FieldTracker(fields=["column"])
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse("cards:card_detail", args=[self.id])
+
+    def save(self, *args, **kwargs):
+        if not self.position or self.tracker.has_changed("column"):
+            self.position = (
+                self.column.card_set.aggregate(models.Max("position"))["position__max"]
+                or 0
+            ) + 1
+        return super().save(*args, **kwargs)
