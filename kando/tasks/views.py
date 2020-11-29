@@ -1,7 +1,6 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -31,11 +30,6 @@ def create_task(request, card_id):
             task = form.save(commit=False)
             task.card = card
             task.owner = request.user
-            # tbd: tidy this up later
-            task.position = (
-                card.task_set.aggregate(Max("position"))["position__max"] or 0
-            ) + 1
-
             task.save()
 
             messages.success(request, _("Task has been added"))
