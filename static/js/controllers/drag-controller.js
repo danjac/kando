@@ -25,11 +25,11 @@ export default class extends Controller {
   }
 
   update(event) {
-    const items = [];
-    this.draggableTargets.forEach((target) => {
-      items.push(target.dataset.id);
-    });
     if (this.data.has('url')) {
+      const items = [];
+      this.draggableTargets.forEach((target) => {
+        items.push(target.dataset.id);
+      });
       axios.post(this.data.get('url'), { items });
     }
   }
