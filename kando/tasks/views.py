@@ -69,7 +69,7 @@ def edit_task(request, task_id):
         ),
         pk=task_id,
     )
-    # has_perm_or_403(request.user, "tasks.mark_complete", task)
+    has_perm_or_403(request.user, "tasks.change_task", task)
     form = TaskForm(request.POST, instance=task)
     if form.is_valid():
         task.save()
@@ -85,7 +85,7 @@ def delete_task(request, task_id):
         ),
         pk=task_id,
     )
-    # has_perm_or_403(request.user, "tasks.mark_complete", task)
+    has_perm_or_403(request.user, "tasks.delete_task", task)
     task.delete()
     return redirect(task.card)
 

@@ -55,8 +55,14 @@ def card_detail(request, card_id):
         "card", "owner", "card__owner", "card__assignee"
     ).order_by("position")
 
+    attachments = card.attachment_set.select_related(
+        "card", "owner", "card__owner", "card__assignee"
+    ).order_by("created")
+
     return TemplateResponse(
-        request, "cards/detail.html", {"card": card, "tasks": tasks}
+        request,
+        "cards/detail.html",
+        {"card": card, "tasks": tasks, "attachments": attachments},
     )
 
 

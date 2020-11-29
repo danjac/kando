@@ -1,5 +1,6 @@
 # Standard Library
 import mimetypes
+import os
 
 # Django
 from django.conf import settings
@@ -33,9 +34,13 @@ class Attachment(TimeStampedModel):
     media_type = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
-        return self.file.name
+        return self.basename
+
+    @property
+    def basename(self):
+        return os.path.basename(self.file.name)
 
     def save(self, *args, **kwargs):
-        _, media_type = mimetypes.guess_type(self.file.name)
+        media_type, _ = mimetypes.guess_type(self.file.name)
         self.media_type = media_type
         return super().save(*args, **kwargs)
