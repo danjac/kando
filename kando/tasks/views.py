@@ -1,7 +1,7 @@
-# Django
 # Standard Library
 import json
 
+# Django
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
