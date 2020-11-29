@@ -13,6 +13,7 @@ class InviteForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop("project")
         super().__init__(*args, **kwargs)
+        self.fields["emails"].label = _("Email addresses (one email per line)")
 
     def clean_emails(self):
         emails = [
@@ -38,17 +39,6 @@ class InviteForm(forms.Form):
                 raise forms.ValidationError(
                     _("Email address %(email)s is already a member of this project"),
                     params={"email": email},
-                )
-
-        invites = self.project.invite_set.filter(email__in=emails).iterator()
-
-        for invite in invites:
-            if invite.email.lower() in emails:
-                raise forms.ValidationError(
-                    _(
-                        "Email address %(email)s has already been invited to this project"
-                    ),
-                    params={"email": invite.email},
                 )
 
         members = self.project.members.filter(email__in=emails).iterator()

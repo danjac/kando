@@ -25,6 +25,7 @@ class TestInviteForm:
         assert form.is_valid()
 
     def test_already_invited_email_same_project(self, project):
+        # same person can receive multiple invites
         InviteFactory(email="example1@example.com", project=project)
         data = {
             "emails": """
@@ -33,7 +34,7 @@ class TestInviteForm:
             """
         }
         form = InviteForm(data, project=project)
-        assert not form.is_valid()
+        assert form.is_valid()
 
     def test_invalid_email(self, project):
         data = {

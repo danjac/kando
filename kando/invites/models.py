@@ -36,13 +36,6 @@ class Invite(TimeStampedModel):
 
     accepted = models.DateTimeField(null=True, blank=True)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                name="unique_project_invite", fields=["project", "email"]
-            )
-        ]
-
     def __str__(self):
         return self.guid
 
