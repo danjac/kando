@@ -127,6 +127,7 @@
          class="mb-3">
       <div class="sm:flex border p-2 items-center justify-between"
            data-id="{{ task.id }}"
+           data-group="shared"
            data-target="drag.draggable">
         {% has_perm "tasks.change_task" user task as can_change_task %}
         {% has_perm "tasks.delete_task" user task as can_delete_task %}
@@ -232,7 +233,9 @@
   </thead>
   <tbody>
     {% for attachment in attachments %}
-    <tr {% if not forloop.last %} class="border-b"{% endif %}>
+    <tr {% if not forloop.last %}
+        class="border-b"
+        {% endif %}>
       <td class="p-2">{{ attachment.basename }}</td>
       <td class="p-2">{{ attachment.media_type }}</td>
       <td class="p-2 text-right">

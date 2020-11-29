@@ -8,7 +8,7 @@ export default class extends Controller {
     // set put: false to prevent
     this.sortable = Sortable.create(this.element, {
       animation: 150,
-      draggable: '.draggable',
+      draggable: this.data.get('draggable') || '.draggable',
       group: this.data.get('group') || 'shared',
       onAdd: this.add.bind(this),
       onRemove: this.remove.bind(this),
@@ -27,8 +27,13 @@ export default class extends Controller {
   update(event) {
     if (this.data.has('url')) {
       const items = [];
+      // problem if nested draggable items...
+      // need to check if target has a specific "grouper"
+      const group = this.data.get('group');
       this.draggableTargets.forEach((target) => {
-        items.push(target.dataset.id);
+        if (target.dataset.group === group) {
+          items.push(target.dataset.id);
+        }
       });
       axios.post(this.data.get('url'), { items });
     }

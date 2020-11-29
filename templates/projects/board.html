@@ -62,9 +62,14 @@
 
 </div>
 
-<div class="md:flex md:overflow-y-auto md:whitespace-no-wrap">
+<div class="md:flex md:overflow-y-auto md:whitespace-no-wrap"
+     data-controller="drag"
+     data-drag-group="shared-columns">
   {% for column in columns %}
-  <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border">
+  <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border draggable"
+       data-target="drag.draggable"
+       data-group="shared-columns"
+       data-id="{{ column.id }}">
     <div class="bg-gray-100 flex items-center justify-start md:justify-center font-bold text-lg p-2">
       {{ column.name }}
       <a class="ml-2 focus:outline-none"
@@ -75,7 +80,7 @@
     </div>
     <div class="p-2 bg-white"
          data-controller="drag"
-         data-drag-group="shared"
+         data-drag-group="shared-tasks"
          data-drag-url="{% url 'cards:move_cards' column.id %}">
       {% for card in cards %}
       {% if card.column == column %}
@@ -84,6 +89,7 @@
            {% spaceless %}
            {% if can_move_card %}
            data-id="{{ card.id }}"
+           data-group="shared-tasks"
            data-target="drag.draggable"
            {% endif %}{% endspaceless %}>
         <div class="mb-1">
