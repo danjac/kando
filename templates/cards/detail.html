@@ -17,7 +17,6 @@
 {% has_perm "cards.create_card" user card.project as can_create_card %}
 {% has_perm "cards.change_card" user card as can_change_card %}
 {% has_perm "cards.delete_card" user card as can_delete_card %}
-{% has_perm "tasks.create_task" user card as can_create_task %}
 
 <div class="flex items-center justify-between mb-3">
   <h1 class="text-xl font-bold">{{ card.name }}</h1>
@@ -37,13 +36,6 @@
       <a href="{% url 'cards:create_card_for_column' card.project.id card.column.id %}"
          class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
         <i class="fa fa-plus mr-2"></i>{% translate "Add Another Card" %}
-      </a>
-      {% endif %}
-
-      {% if can_create_task %}
-      <a href="{% url 'tasks:create_task' card.id %}"
-         class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
-        <i class="fa fa-plus mr-2"></i>{% translate "Add New Task" %}
       </a>
       {% endif %}
 
@@ -85,35 +77,138 @@
 </p>
 {% endif %}
 
-{% if tasks %}
 <h2 class="text-lg font-semibold mb-3">{% translate "Tasks" %}</h2>
-<div data-controller="drag"
-     data-drag-group="shared">
+{% if not tasks %}
+<p class="mb-3 italic">
+  {% translate "This card does not have any tasks" %}
+</p>
+{% endif %}
+
+{% has_perm "tasks.move_tasks" user card as can_move_tasks %}
+<div {% spaceless %}{% if can_move_tasks %}data-controller="drag"
+     data-drag-group="shared"
+     data-drag-url="{% url 'tasks:move_tasks' card.id %}"
+     {% endif %}{% endspaceless %}>
   {% for task in tasks %}
-  <div class="border mb-3 p-2 sm:flex items-center hover:bg-gray-100 justify-between draggable"
-       data-id="{{ task.id }}"
-       data-target="drag.draggable">
-    <div class="flex items-center">
-      <input type="checkbox"
-             {% if task.completed %}
-             checked{% endif %}
-             class="mr-4">
-      <span>
-        {{ task.description }}
-      </span>
+
+  <div data-controller="toggle"
+       class="draggable">
+
+    <div data-target="toggle.item"
+         class="mb-3 hidden">
+      <form class="sm:flex border p-2 items-center justify-between"
+            data-controller="form"
+            data-action="form#submit"
+            method="post"
+            action="{% url 'tasks:edit_task' task.id %}">
+
+        <div>
+          <input type="text"
+                 required
+                 name="description"
+                 value="{{ task.description }}"
+                 class="p-1 w-96">
+        </div>
+        <div>
+          <button type="button"
+                  data-action="toggle#toggle"
+                  class="text-blue-800 hover:text-blue-600 mr-2">
+            {% translate "Cancel" %}
+          </button>
+          <button type="submit"
+                  class="px-4 py-1 rounded bg-blue-800 hover:bg-blue-100 text-white">
+            {% translate "Save" %}
+          </button>
+        </div>
+      </form>
     </div>
-    <div>
-      <a href=""
-         class="border px-4 py-1 rounded hover:bg-gray-100 w-full mr-2">
-        <i class="fa fa-pen mr-2"></i>{% translate "Edit" %}
-      </a>
-      <a href=""
-         class="border border-red-800 px-4 py-1 rounded hover:bg-red-100 w-full mb-2 text-red-800">
-        <i class="fa fa-trash mr-2"></i>{% translate "Delete" %}
-      </a>
+
+    <div data-target="toggle.item"
+         class="mb-3">
+      <div class="sm:flex border p-2 items-center justify-between"
+           data-id="{{ task.id }}"
+           data-target="drag.draggable">
+        {% has_perm "tasks.change_task" user task as can_change_task %}
+        {% has_perm "tasks.delete_task" user task as can_delete_task %}
+        <div class="flex items-center">
+          <input type="checkbox"
+                 {% spaceless %}
+                 {% if task.completed %}
+                 checked{% endif %}
+                 class="mr-4"
+                 {% if can_change_task %}
+                 data-controller="ajax"
+                 data-ajax-url="{% url 'tasks:toggle_complete' task.id %}"
+                 data-action="ajax#post"
+                 {% else %}
+                 disabled
+                 {% endif %}
+                 {% endspaceless %}>
+          <span{% if task.completed %} class="line-through"
+                                       {% endif %}>
+            {{ task.description }}
+            </span>
+        </div>
+        <div>
+          {% if can_change_task %}
+          <button data-action="toggle#toggle"
+                  class="border px-4 py-1 rounded hover:bg-gray-100 mr-2">
+            <i class="fa fa-pen mr-2"></i>{% translate "Edit" %}
+          </button>
+          {% endif %}
+          {% if can_delete_task %}
+          <button data-controller="ajax"
+                  data-ajax-url="{% url 'tasks:delete_task' task.id %}"
+                  data-action="ajax#post"
+                  class="border border-red-800 px-4 py-1 rounded hover:bg-red-100 text-red-800">
+            <i class="fa fa-trash mr-2"></i>{% translate "Delete" %}
+          </button>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
+
   {% endfor %}
+</div>
+
+{% has_perm "tasks.create_task" user card as can_create_task %}
+{% if can_create_task %}
+<div data-controller="toggle">
+  <div data-target="toggle.item">
+    <button data-action="toggle#toggle"
+            class="border px-4 py-1 rounded hover:bg-gray-100 mr-2">
+      <i class="fa fa-plus mr-2"></i>{% translate "Add New Task" %}
+    </button>
+  </div>
+  <div class="hidden"
+       data-target="toggle.item">
+    <form class="sm:flex border p-2 items-center justify-between"
+          data-controller="form"
+          data-action="form#submit"
+          method="post"
+          action="{% url 'tasks:create_task' card.id %}">
+
+      <div>
+        <input type="text"
+               required
+               name="description"
+               placeholder="Task description..."
+               class="p-1 w-96">
+      </div>
+      <div>
+        <button type="button"
+                data-action="toggle#toggle"
+                class="text-blue-800 hover:text-blue-600 mr-2">
+          {% translate "Cancel" %}
+        </button>
+        <button type="submit"
+                class="px-4 py-1 rounded bg-blue-800 hover:bg-blue-100 text-white">
+          {% translate "Save" %}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endif %}
 {% endblock content %}

@@ -1,11 +1,11 @@
 # Django
-from django.contrib import messages
+# Standard Library
+import json
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
-from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 # Kando
@@ -18,48 +18,86 @@ from .models import Task
 
 
 @login_required
+@require_POST
 def create_task(request, card_id):
     card = get_object_or_404(
         Card.objects.select_related("owner", "project", "assignee"), pk=card_id
     )
     has_perm_or_403(request.user, "tasks.create_task", card)
 
-    if request.method == "POST":
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.card = card
-            task.owner = request.user
-            task.save()
-
-            messages.success(request, _("Task has been added"))
-            return redirect(card)
-    else:
-        form = TaskForm()
-    return TemplateResponse(
-        request, "tasks/task_form.html", {"form": form, "card": card}
-    )
+    form = TaskForm(request.POST)
+    if form.is_valid():
+        task = form.save(commit=False)
+        task.card = card
+        task.owner = request.user
+        task.save()
+    return redirect(card)
 
 
 @login_required
 @require_POST
-def mark_complete(request, task_id):
-    task = get_object_or_404(
-        Task.objects.select_related("owner", "project", "card"), pk=task_id
+def move_tasks(request, card_id):
+    card = get_object_or_404(
+        Card.objects.select_related("owner", "project", "assignee"), pk=card_id
     )
-    has_perm_or_403(request.user, "tasks.mark_complete", task)
-    task.completed = timezone.now()
-    task.save()
+    has_perm_or_403(request.user, "tasks.move_tasks", card)
+    try:
+        task_ids = [int(pk) for pk in json.loads(request.body)["items"]]
+    except (KeyError, ValueError):
+        return HttpResponseBadRequest("Invalid payload")
+
+    qs = card.task_set.all()
+    tasks = qs.in_bulk()
+    for_update = []
+
+    for position, task_id in enumerate(task_ids, 1):
+        task = tasks.get(task_id)
+        if task:
+            task.position = position
+            for_update.append(task)
+
+    qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=204)
 
 
 @login_required
 @require_POST
-def mark_uncomplete(request, task_id):
+def edit_task(request, task_id):
     task = get_object_or_404(
-        Task.objects.select_related("owner", "project", "card"), pk=task_id
+        Task.objects.select_related(
+            "owner", "card", "card__project", "card__owner", "card__assignee"
+        ),
+        pk=task_id,
     )
-    has_perm_or_403(request.user, "tasks.mark_complete", task)
-    task.completed = None
+    # has_perm_or_403(request.user, "tasks.mark_complete", task)
+    form = TaskForm(request.POST, instance=task)
+    if form.is_valid():
+        task.save()
+    return redirect(task.card)
+
+
+@login_required
+@require_POST
+def delete_task(request, task_id):
+    task = get_object_or_404(
+        Task.objects.select_related(
+            "owner", "card", "card__project", "card__owner", "card__assignee"
+        ),
+        pk=task_id,
+    )
+    # has_perm_or_403(request.user, "tasks.mark_complete", task)
+    task.delete()
+    return redirect(task.card)
+
+
+@login_required
+@require_POST
+def toggle_complete(request, task_id):
+    task = get_object_or_404(
+        Task.objects.select_related("owner", "card", "card__owner", "card__assignee"),
+        pk=task_id,
+    )
+    has_perm_or_403(request.user, "tasks.change_task", task)
+    task.completed = None if task.completed else timezone.now()
     task.save()
-    return HttpResponse(status=204)
+    return redirect(task.card)
