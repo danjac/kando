@@ -53,7 +53,6 @@ class Project(TimeStampedModel):
     description = models.TextField(blank=True)
 
     is_active = models.BooleanField(default=True)
-    task_limit = models.IntegerField(default=0)
 
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

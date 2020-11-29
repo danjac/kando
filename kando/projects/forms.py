@@ -9,11 +9,11 @@ from .models import Project
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ("name", "description", "task_limit")
+        fields = (
+            "name",
+            "description",
+        )
         labels = {"name": _("Project Name")}
-        help_texts = {
-            "task_limit": _("Maximum number of cards per column"),
-        }
 
 
 class ProjectCreationForm(ProjectForm):

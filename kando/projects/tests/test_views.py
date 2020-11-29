@@ -30,7 +30,6 @@ class TestCreateProject:
         data = {
             "name": "test project",
             "description": "test",
-            "task_limit": 10,
         }
 
         response = client.post(reverse("projects:create_project"), data)

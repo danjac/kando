@@ -13,7 +13,6 @@ class TestProjectCreationForm:
         data = {
             "name": "test project",
             "description": "test",
-            "task_limit": 10,
         }
         form = ProjectCreationForm(data)
         assert form.is_valid()
