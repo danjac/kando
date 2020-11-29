@@ -2,6 +2,13 @@
 {% load i18n rules %}
 
 {% block content %}
+
+{% has_perm "projects.change_project" user project as can_change_project %}
+{% has_perm "projects.delete_project" user project as can_delete_project %}
+{% has_perm "columns.create_column" user project as can_create_column %}
+{% has_perm "columns.move_columns" user project as can_move_columns %}
+{% has_perm "cards.create_card" user project as can_create_card %}
+
 <div class="text-sm flex items-center mb-3">
   <a href="{% url 'projects:projects_overview' %}"
      class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
@@ -10,10 +17,6 @@
     {{ project.name }}
   </span>
 </div>
-
-{% has_perm "projects.change_project" user project as can_change_project %}
-{% has_perm "projects.delete_project" user project as can_delete_project %}
-{% has_perm "cards.create_card" user project as can_create_card %}
 
 <div class="flex items-center mb-3">
   <div class="relative"
@@ -57,14 +60,18 @@
       {% endif %}
 
     </div>
-  </div>
+  </div{% endspaceless %}>
   <h1 class="text-xl font-bold">{{ project.name }}</h1>
 
 </div>
 
 <div class="md:flex md:overflow-y-auto md:whitespace-no-wrap"
+     {% spaceless %}
+     {% if can_move_columns %}
      data-controller="drag"
-     data-drag-group="shared-columns">
+     data-drag-group="shared-columns"
+     data-drag-url="{% url 'columns:move_columns' project.id %}"
+     {% endif %}{% endspaceless %}>
   {% for column in columns %}
   <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border draggable"
        data-target="drag.draggable"

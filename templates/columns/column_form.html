@@ -6,24 +6,24 @@
   <a href="{% url 'projects:projects_overview' %}"
      class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
   <span class="text-gray-500 mr-2">&gt;</span>
-  {% if project %}
   <a href="{{ project.get_absolute_url }}"
      class="text-blue-800 hover:text-blue-600 mr-2">
     {{ project.name }}
   </a>
   <span class="text-gray-500 mr-2">&gt;</span>
-  <span class="text-gray-500">{% translate "Edit Project" %}</span>
+  {% if column %}
+  <span class="text-gray-500">{% translate "Edit Column" %}</span>
   {% else %}
-  <span class="text-gray-500">{% translate "New Project" %}</span>
+  <span class="text-gray-500">{% translate "New Card" %}</span>
   {% endif %}
 </div>
 
 
 <h1 class="text-xl font-bold mb-3">
-  {% if project %}
-  {% translate "Edit Project" %}
+  {% if column %}
+  {% translate "Edit Column" %}
   {% else %}
-  {% translate "New Project" %}
+  {% translate "New Column" %}
   {% endif %}
 </h1>
 <form class="p-3 bg-white border rounded w-full lg:w-2/3{% if form.errors %} border-red-800{% endif %}"
@@ -42,26 +42,18 @@
     {% include "_form_errors.html" with errors=form.name.errors %}
     {% include "_form_help_text.html" with help_text=form.name.help_text %}
   </div>
-  <div class="mb-3">
-    <label class="font-semibold">
-      {{ form.description.label }}
-      {% render_field form.description class="p-1 w-full"  %}
-    </label>
-    {% include "_form_errors.html" with errors=form.description.errors %}
-    {% include "_form_help_text.html" with help_text=form.description.help_text %}
-  </div>
   {% endwith %}
   <div class="flex items-center justify-end">
-    {% if project %}
+    {% if column %}
     <a href="{{ project.get_absolute_url }}"
        class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
     {% endif %}
     <button type="submit"
             class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
-      {% if project %}
-      {% translate "Save Project" %}
+      {% if column %}
+      {% translate "Save Column" %}
       {% else %}
-      {% translate "Create Project" %}
+      {% translate "Create Column" %}
       {% endif %}
     </button>
   </div>
