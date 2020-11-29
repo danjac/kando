@@ -13,7 +13,7 @@ urlpatterns = [
     path("<int:task_id>/~/delete/", views.delete_task, name="delete_task"),
     path(
         "<int:task_id>/~/toggle-complete/",
-        views.toggle_complete,
+        views.toggle_task_complete,
         name="toggle_complete",
     ),
 ]

@@ -92,7 +92,7 @@ def delete_task(request, task_id):
 
 @login_required
 @require_POST
-def toggle_complete(request, task_id):
+def toggle_task_complete(request, task_id):
     task = get_object_or_404(
         Task.objects.select_related("owner", "card", "card__owner", "card__assignee"),
         pk=task_id,
