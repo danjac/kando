@@ -1,4 +1,3 @@
-# Third Party Libraries
 # Standard Library
 import json
 
@@ -6,6 +5,7 @@ import json
 from django.urls import reverse
 from django.utils import timezone
 
+# Third Party Libraries
 import pytest
 
 # Kando
