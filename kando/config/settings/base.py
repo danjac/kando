@@ -49,6 +49,7 @@ ROOT_URLCONF = "kando.config.urls"
 WSGI_APPLICATION = "kando.config.wsgi.application"
 
 LOCAL_APPS = [
+    "kando.attachments.apps.AttachmentsConfig",
     "kando.cards.apps.CardsConfig",
     "kando.columns.apps.ColumnsConfig",
     "kando.invites.apps.InvitesConfig",

@@ -23,9 +23,7 @@ class Attachment(TimeStampedModel):
     # but card might also have its own attachments
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
-    card = models.ForeignKey(
-        Card, on_delete=models.CASCADE, null=True, blank=True, on_delete=models.SET_NULL
-    )
+    card = models.ForeignKey(Card, null=True, blank=True, on_delete=models.SET_NULL)
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
