@@ -19,8 +19,16 @@ class TestPermissions:
         assert card.owner.has_perm("cards.delete_card", card)
         assert card.owner.has_perm("cards.move_card", card)
 
-    def test_card_assignee(self, card):
+    def test_card_assignee_non_member(self):
         card = CardFactory(assignee=UserFactory())
+        assert not card.assignee.has_perm("cards.view_card", card)
+        assert not card.assignee.has_perm("cards.change_card", card)
+        assert not card.assignee.has_perm("cards.delete_card", card)
+        assert not card.assignee.has_perm("cards.move_card", card)
+
+    def test_card_assignee_member(self, card):
+        card = CardFactory(assignee=UserFactory())
+        ProjectMemberFactory(user=card.assignee, project=card.project)
         assert card.assignee.has_perm("cards.view_card", card)
         assert not card.assignee.has_perm("cards.change_card", card)
         assert not card.assignee.has_perm("cards.delete_card", card)

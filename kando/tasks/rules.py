@@ -6,16 +6,8 @@ from kando.cards.rules import is_card_owner_or_assignee
 
 
 @rules.predicate
-def is_task_card_owner(user, task):
-    return user.is_authenticated and task.card.owner == user
-
-
-@rules.predicate
-def is_task_card_assignee(user, task):
-    return user.is_authenticated and task.card.assignee == user
-
-
-is_task_card_owner_or_assignee = is_task_card_owner | is_task_card_assignee
+def is_task_card_owner_or_assignee(user, task):
+    return user.is_authenticated and is_card_owner_or_assignee(user, task.card)
 
 
 rules.add_perm("tasks.create_task", is_card_owner_or_assignee)

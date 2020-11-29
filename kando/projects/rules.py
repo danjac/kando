@@ -22,9 +22,10 @@ def is_project_admin(user, project):
     return user.is_authenticated and user.is_admin(project)
 
 
+is_project_owner_or_member = is_project_owner | is_project_member
 is_project_owner_or_admin = is_project_owner | is_project_admin
 
-rules.add_perm("projects.view_project", is_project_owner | is_project_member)
+rules.add_perm("projects.view_project", is_project_owner_or_member)
 rules.add_perm("projects.change_project", is_project_owner_or_admin)
 rules.add_perm("projects.add_members", is_project_owner_or_admin)
 rules.add_perm("projects.delete_project", is_project_owner)

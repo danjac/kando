@@ -16,11 +16,11 @@ class TestPermissions:
         assert task.card.owner.has_perm("tasks.change_task", task)
         assert task.card.owner.has_perm("tasks.delete_task", task)
 
-    def test_card_assignee(self):
+    def test_card_assignee_non_member(self):
         user = UserFactory()
         card = CardFactory(assignee=user)
         task = TaskFactory(card=card)
-        assert card.assignee.has_perm("tasks.create_task", card)
-        assert card.assignee.has_perm("tasks.move_tasks", card)
-        assert card.assignee.has_perm("tasks.change_task", task)
-        assert card.assignee.has_perm("tasks.delete_task", task)
+        assert not card.assignee.has_perm("tasks.create_task", card)
+        assert not card.assignee.has_perm("tasks.move_tasks", card)
+        assert not card.assignee.has_perm("tasks.change_task", task)
+        assert not card.assignee.has_perm("tasks.delete_task", task)
