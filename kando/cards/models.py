@@ -10,6 +10,7 @@ from model_utils.models import TimeStampedModel
 # Kando
 from kando.columns.models import Column
 from kando.projects.models import Project
+from kando.swimlanes.models import Swimlane
 
 
 class CardQuerySet(models.QuerySet):
@@ -33,6 +34,9 @@ class Card(TimeStampedModel):
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     column = models.ForeignKey(Column, on_delete=models.CASCADE)
+    swimlane = models.ForeignKey(
+        Swimlane, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
