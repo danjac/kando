@@ -1,4 +1,7 @@
 # Third Party Libraries
+# Standard Library
+import json
+
 # Django
 from django.urls import reverse
 from django.utils import timezone
@@ -77,3 +80,15 @@ class TestToggleTaskComplete:
         assert response.url == card_for_login_user.get_absolute_url()
         task.refresh_from_db()
         assert not task.completed
+
+
+class TestMoveTasks:
+    def test_post(self, client, card_for_login_user):
+        tasks = TaskFactory.create_batch(12, card=card_for_login_user)
+        data = {"items": [task.id for task in tasks]}
+        response = client.post(
+            reverse("tasks:move_tasks", args=[card_for_login_user.id]),
+            data=json.dumps(data),
+            content_type="application/json",
+        )
+        assert response.status_code == 204
