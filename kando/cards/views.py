@@ -103,7 +103,7 @@ def delete_card(request, card_id):
 @login_required
 @require_POST
 def move_cards(request, column_id):
-    column = get_object_or_404(Column.objects.select_related("project"), pk=column_id,)
+    column = get_object_or_404(Column.objects.select_related("project"), pk=column_id)
 
     try:
         card_ids = [int(pk) for pk in json.loads(request.body)["items"]]

@@ -18,7 +18,6 @@ class Column(TimeStampedModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        # columns can be moved within a swimlane
         if not self.position:
             self.position = (
                 self.project.column_set.aggregate(models.Max("position"))[
