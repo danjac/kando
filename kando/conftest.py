@@ -11,6 +11,7 @@ from kando.cards.factories import CardFactory
 from kando.columns.factories import ColumnFactory
 from kando.invites.factories import InviteFactory
 from kando.projects.factories import ProjectFactory, ProjectMemberFactory
+from kando.tasks.factories import TaskFactory
 from kando.users.factories import UserFactory
 
 
@@ -64,6 +65,11 @@ def card(column):
     return CardFactory(
         project=column.project, column=column, owner=column.project.owner
     )
+
+
+@pytest.fixture
+def task(card):
+    return TaskFactory(card=card, owner=card.owner)
 
 
 @pytest.fixture
