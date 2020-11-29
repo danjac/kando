@@ -13,9 +13,8 @@ pytestmark = pytest.mark.django_db
 
 class TestProjectManager:
     def test_create_project(self, user):
-        project = Project.objects.create_project("test project", user, is_private=True)
+        project = Project.objects.create_project("test project", user)
         assert project.owner == user
-        assert project.is_private
         assert project.column_set.count() == 4
 
         columns = project.column_set.order_by("position")

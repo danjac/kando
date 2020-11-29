@@ -232,7 +232,7 @@
   </thead>
   <tbody>
     {% for attachment in attachments %}
-    <tr>
+    <tr {% if not forloop.last %} class="border-b"{% endif %}>
       <td class="p-2">{{ attachment.basename }}</td>
       <td class="p-2">{{ attachment.media_type }}</td>
       <td class="p-2 text-right">

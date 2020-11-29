@@ -52,7 +52,6 @@ class Project(TimeStampedModel):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
-    is_private = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     task_limit = models.IntegerField(default=0)
 

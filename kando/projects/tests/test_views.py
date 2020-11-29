@@ -30,7 +30,6 @@ class TestCreateProject:
         data = {
             "name": "test project",
             "description": "test",
-            "is_private": False,
             "task_limit": 10,
         }
 

@@ -13,7 +13,6 @@ class TestProjectCreationForm:
         data = {
             "name": "test project",
             "description": "test",
-            "is_private": False,
             "task_limit": 10,
         }
         form = ProjectCreationForm(data)

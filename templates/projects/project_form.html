@@ -52,13 +52,6 @@
   </div>
   <div class="mb-3">
     <label class="font-semibold">
-      {% translate "Private Project?" %}
-      {% render_field form.is_private class="ml-3" %}
-    </label>
-    {% include "_form_help_text.html" with help_text=form.is_private.help_text %}
-  </div>
-  <div class="mb-3">
-    <label class="font-semibold">
       {{ form.task_limit.label }}
       {% render_field form.task_limit class="p-1 w-32 ml-3"  %}
     </label>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n pagination %}
+{% load i18n account pagination %}
 
 {% block content %}
 
@@ -12,24 +12,24 @@
 </div>
 
 {% paginate projects as page_obj %}
-<table class="table-fixed border p-3 w-full bg-white rounded">
+<table class="table-auto border p-3 w-full bg-white rounded">
   {% if projects %}
   <thead>
-    <tr class="bg-gray-100">
-      <th class="w-1/2 p-2">{% translate "Project" %}</th>
-      <th class="w-1/4 p-2">{% translate "Owner" %}</th>
+    <tr class="bg-gray-100 text-left">
+      <th class="p-2">{% translate "Project" %}</th>
+      <th class="p-2">{% translate "Owner" %}</th>
     </tr>
   </thead>
   {% endif %}
   <tbody>
     {% for project in page_obj %}
-    <tr class="{% cycle 'bg-white' 'bg-gray-100' %} hover:bg-blue-100">
-      <td class="p-2 border-r">
+    <tr class="{% if not forloop.last %} border-b{% endif %}">
+      <td class="p-2">
         <a href="{{ project.get_absolute_url }}"
            class="text-blue-800 hover:text-blue-600">{{ project.name }}</a>
       </td>
-      <td class="p-2 border-r">
-        <a href="">{{ project.owner }}</a>
+      <td class="p-2">
+        {% user_display project.owner %}
       </td>
     </tr>
     {% empty %}
