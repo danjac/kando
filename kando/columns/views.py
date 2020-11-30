@@ -95,6 +95,7 @@ def move_columns(request, project_id):
     for position, column in sort_draggable_items(
         request, project.column_set.all(), ["position"]
     ):
+        print(column.id, position)
         column.position = position
 
     return HttpResponse(status=204)
