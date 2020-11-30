@@ -75,9 +75,7 @@ def duplicate_project(request, project_id):
     has_perm_or_403(request.user, "projects.view_project", project)
 
     duplicate = Project.objects.create(
-        name=f"[DUPLICATE] {project.name}",
-        description=project.description,
-        owner=request.user,
+        name=f"[DUPLICATE] {project.name}", owner=request.user,
     )
 
     for column in project.column_set.all():
