@@ -13,7 +13,7 @@ urlpatterns = [
     path(
         "<int:project_id>/member/<slug:username>/",
         views.project_member_detail,
-        name="project_member_detail",
+        name="member_detail",
     ),
     path("<int:project_id>/~edit/", views.edit_project, name="edit_project"),
     path("<int:project_id>/~delete/", views.delete_project, name="delete_project"),

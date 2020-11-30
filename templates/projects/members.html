@@ -28,42 +28,37 @@
 </div>
 
 {% paginate members as page_obj %}
-<table class="table-fixed border p-3 w-full bg-white rounded">
+<table class="table-auto border p-3 w-full bg-white rounded">
   <thead>
-    <tr class="bg-gray-100">
-      <th class="w-1/2 p-2">{% translate "User" %}</th>
-      <th class="w-1/4 p-2">{% translate "Role" %}</th>
-      <th class="w-1/4 p-2">{% translate "Actions" %}</th>
+    <tr class="bg-gray-100 text-left">
+      <th class="p-2">{% translate "User" %}</th>
+      <th class="p-2">{% translate "Role" %}</th>
     </tr>
   </thead>
   <tbody>
-    {% if project.owner %}
-    <tr class="bg-white">
-      <td class="p-2 border-r">
-        <a href=""
+    {% if project.owner and page_obj.number == 1 %}
+    <tr class="hover:bg-gray-100">
+      <td class="p-2">
+        <a href="{% url 'projects:member_detail' project.id project.owner.username %}"
            class="text-blue-800 hover:text-blue-600">
           {% user_display project.owner %}
         </a>
       </td>
-      <td class="p-2 border-r font-semibold">
+      <td class="p-2 font-semibold">
         {% translate "Owner" %}
-      </td>
-      <td class="p-2">
       </td>
     </tr>
     {% endif %}
     {% for member in page_obj %}
-    <tr class="{% cycle 'bg-gray-100' 'bg-white' %} hover:bg-blue-100">
-      <td class="p-2 border-r">
-        <a href=""
+    <tr class="hover:bg-gray-100">
+      <td class="p-2">
+        <a href="{{ member.get_absolute_url }}"
            class="text-blue-800 hover:text-blue-600">
           {% user_display member.user %}
         </a>
       </td>
-      <td class="p-2 font-semibold">
-        {{ member.get_role_display }}
-      </td>
       <td class="p-2">
+        {{ member.get_role_display }}
       </td>
     </tr>
     {% endfor %}

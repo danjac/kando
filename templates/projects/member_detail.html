@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n rules %}
+{% load i18n account rules %}
 
 {% block content %}
 
@@ -7,10 +7,100 @@
   <a href="{% url 'projects:projects_overview' %}"
      class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
   <span class="text-gray-500 mr-2">&gt;</span>
-  <span class="text-gray-500">
-    {{ project.name }}
-  </span>
+
+  <a href="{{ project.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">{{ project.name }}</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <span class="text-gray-500">{% user_display user_obj %}</span>
 </div>
+
+<h1 class="text-xl font-semibold mb-3">{% user_display user_obj %} - {% if member %}{{ member.get_role_display }}{% else %}{% translate "Project Owner" %}{% endif %}</h1>
+
+{% if owned_cards %}
+<h2 class="text-lg font-semibold mb-3">{% translate "Owned Cards" %}</h2>
+<table class="table-auto p-3 w-full border mb-3">
+  <thead>
+    <tr class="bg-gray-100 text-left">
+      <th class="p-2">{% translate "Card" %}</th>
+      <th class="p-2">{% translate "Assignee" %}</th>
+      <th class="p-2">{% translate "Column" %}</th>
+      <th class="p-2">{% translate "Priority" %}</th>
+      <th class="p-2">{% translate "Complexity" %}</th>
+      <th class="p-2">{% translate "Estimated Hours" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in owned_cards %}
+    <tr class="hover:bg-gray-100">
+      <td class="p-2">
+        <a href="{{ card.get_absolute_url }}"
+           class="text-blue-800 hover:text-blue-600 underline">{{ card.name }}</a>
+      </td>
+      <td class="p-2">
+        {% if card.assignee %}
+        <a href="{% url 'projects:member_detail' project.id card.assignee.username %}"
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display card.assignee %}
+        </a>
+        {% else %}
+        {% translate "Unassigned" %}
+        {% endif %}
+      </td>
+       <td class="p-2">
+        <a href="{{ card.column.get_absolute_url }}"
+           class="text-blue-800 hover:text-blue-600">
+          {{ card.column.name }}
+        </a>
+      </td>
+     <td class="p-2">{{ card.priority }}</td>
+      <td class="p-2">{{ card.complexity }}</td>
+      <td class="p-2">{{ card.hours_estimated }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if assigned_cards %}
+<h2 class="text-lg font-semibold mb-3">{% translate "Assigned Cards" %}</h2>
+<table class="table-auto p-3 w-full border mb-3">
+  <thead>
+    <tr class="bg-gray-100 text-left">
+      <th class="p-2">{% translate "Card" %}</th>
+      <th class="p-2">{% translate "Owner" %}</th>
+      <th class="p-2">{% translate "Column" %}</th>
+      <th class="p-2">{% translate "Priority" %}</th>
+      <th class="p-2">{% translate "Complexity" %}</th>
+      <th class="p-2">{% translate "Estimated Hours" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in assigned_cards %}
+    <tr class="{% if not forloop.last %} border-b{% endif %}">
+      <td class="p-2">
+        <a href="{{ card.get_absolute_url }}"
+           class="text-blue-800 hover:text-blue-600 underline">{{ card.name }}</a>
+      </td>
+      <td class="p-2">
+        <a href="{% url 'projects:member_detail' project.id card.owner.username %}"
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display card.owner %}
+        </a>
+      </td>
+      <td class="p-2">
+        <a href="{{ card.column.get_absolute_url }}"
+           class="text-blue-800 hover:text-blue-600">
+          {{ card.column.name }}
+        </a>
+      </td>
+      <td class="p-2">{{ card.priority }}</td>
+      <td class="p-2">{{ card.complexity }}</td>
+      <td class="p-2">{{ card.hours_estimated }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 
 
 {% endblock content %}

@@ -64,23 +64,23 @@
 
 {% if cards %}
 
-<table class="table-auto p-3 w-full border mb-3"
-       >
+<table class="table-auto p-3 w-full border mb-3">
   <thead>
     <tr class="bg-gray-100 text-left">
       <th class="p-2">{% translate "Card" %}</th>
       <th class="p-2">{% translate "Owner" %}</th>
+      <th class="p-2">{% translate "Assignee" %}</th>
       <th class="p-2">{% translate "Priority" %}</th>
       <th class="p-2">{% translate "Complexity" %}</th>
       <th class="p-2">{% translate "Estimated Hours" %}</th>
     </tr>
   </thead>
   <tbody data-controller="drag"
-       data-drag-group="shared"
-       data-drag-url="{% url 'cards:move_cards' column.id %}">
+         data-drag-group="shared"
+         data-drag-url="{% url 'cards:move_cards' column.id %}">
     {% for card in cards %}
     {% has_perm "cards.move_card" user card as can_move_card %}
-    <tr class="{% if not forloop.last %} border-b{% endif %}{% if can_move_card %} draggable{% endif %}"
+    <tr class="{% if can_move_card %} draggable{% endif %} hover:bg-gray-100"
         {% if can_move_card %}
         data-target="drag.draggable"
         data-group="shared"
@@ -88,9 +88,24 @@
         {% endif %}>
       <td class="p-2">
         <a href="{{ card.get_absolute_url }}"
-           class="text-blue-800 hover:text-blue-600 underline">{{ card.name }}</a>
+           class="text-blue-800 hover:text-blue-600">{{ card.name }}</a>
       </td>
-      <td class="p-2">{% user_display card.owner %}</td>
+      <td class="p-2">
+        <a href="{% url 'projects:member_detail' card.project.id card.owner.username %}"
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display card.owner %}
+        </a>
+      </td>
+      <td class="p-2">
+        {% if card.assignee %}
+        <a href="{% url 'projects:member_detail' card.project.id card.assignee.username %}"
+           class="text-blue-800 hover:text-blue-600">
+          {% user_display card.assignee %}
+        </a>
+        {% else %}
+        {% translate "Unassigned" %}
+        {% endif %}
+      </td>
       <td class="p-2">{{ card.priority }}</td>
       <td class="p-2">{{ card.complexity }}</td>
       <td class="p-2">{{ card.hours_estimated }}</td>

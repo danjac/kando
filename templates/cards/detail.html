@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n rules %}
+{% load i18n account rules %}
 
 {% block content %}
 <div class="text-sm flex items-center mb-3">
@@ -65,6 +65,27 @@
   {% endif %}
 
   <h1 class="text-xl font-bold">{{ card.name }}</h1>
+</div>
+
+<div class="flex items-center mb-3">
+  <div class="mr-2 font-bold">{% translate "Owner" %}</div>
+  <div class="mr-4">
+    <a href="{% url 'projects:member_detail' card.project.id card.owner.username %}"
+       class="text-blue-800 hover:text-blue-600">
+      {% user_display card.owner %}
+    </a>
+  </div>
+  <div class="mr-2 font-bold">{% translate "Assignee" %}</div>
+  <div class="">
+    {% if card.assignee %}
+    <a href="{% url 'projects:member_detail' card.project.id card.assignee.username %}"
+       class="text-blue-800 hover:text-blue-600">
+      {% user_display card.assignee %}
+    </a>
+    {% else %}
+    {% translate "Unassigned" %}
+    {% endif %}
+  </div>
 </div>
 
 <div class="flex items-center mb-3">

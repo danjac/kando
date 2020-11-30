@@ -1,6 +1,7 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -99,28 +100,42 @@ def project_members(request, project_id):
 
 @login_required
 def project_member_detail(request, project_id, username):
-    member = get_object_or_404(
-        ProjectMember.objects.select_related(
-            "project", "user", "project__owner"
-        ).filter(user__username__iexact=username),
-        project_id=project_id,
+
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
+
+    has_perm_or_403(request.user, "projects.view_project", project)
+
+    if project.owner.username == username:
+        is_owner = True
+        member = None
+        user = project.owner
+    else:
+        member = (
+            ProjectMember.objects.select_related("project", "user", "project__owner")
+            .filter(user__username__iexact=username, project=project)
+            .first()
+        )
+        is_owner = False
+        user = member.user
+
+    if not is_owner and not member:
+        raise Http404()
+
+    cards = project.card_set.order_by("-priority", "-created").select_related(
+        "project", "column", "owner", "assignee"
     )
-    has_perm_or_403(request.user, "projects.view_member", member)
-    owned_cards = (
-        member.user.owned_cards.filter(project=member.project)
-        .order_by("-priority", "-created")
-        .select_related("project", "column", "owner", "assignee")
-    )
-    assigned_cards = (
-        member.user.assigned_cards.filter(project=member.project)
-        .order_by("-priority", "-created")
-        .select_related("project", "column", "owner", "assignee")
-    )
+
+    owned_cards = cards.filter(owner=user)
+    assigned_cards = cards.filter(assignee=user)
+
     return TemplateResponse(
         request,
         "projects/member_detail.html",
         {
+            "project": project,
+            "user_obj": user,
             "member": member,
+            "is_owner": is_owner,
             "owned_cards": owned_cards,
             "assigned_cards": assigned_cards,
         },
