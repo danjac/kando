@@ -45,7 +45,7 @@
       </a>
       {% endif %}
 
-      {% if can_delete_column and not cards %}
+      {% if can_delete_column and is_deletable %}
       <button data-controller="ajax"
               data-ajax-confirm="{% translate 'Are you sure you want to delete this column?' %}"
               data-ajax-url="{% url 'columns:delete_column' column.id %}"

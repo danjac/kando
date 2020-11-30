@@ -94,15 +94,25 @@ class TestEditColumn:
 
 
 class TestDeleteColumn:
-    def test_post(self, client, column_for_login_user):
+    def test_post_single_column(self, client, column_for_login_user):
+        "Deletion not allowed if project just has one column"
         response = client.post(
             reverse("columns:delete_column", args=[column_for_login_user.id]),
         )
         assert response.url == column_for_login_user.project.get_absolute_url()
-        assert Column.objects.count() == 0
+        assert Column.objects.count() == 1
 
     def test_post_with_cards(self, client, column_for_login_user):
+        "Deletion not allowed if column has cards"
         CardFactory(column=column_for_login_user)
+        response = client.post(
+            reverse("columns:delete_column", args=[column_for_login_user.id]),
+        )
+        assert response.url == column_for_login_user.project.get_absolute_url()
+        assert Column.objects.count() == 1
+
+    def test_post_multiple_columns_no_cards(self, client, column_for_login_user):
+        ColumnFactory(project=column_for_login_user.project)
         response = client.post(
             reverse("columns:delete_column", args=[column_for_login_user.id]),
         )

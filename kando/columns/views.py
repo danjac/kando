@@ -26,8 +26,12 @@ def column_detail(request, column_id):
     cards = column.card_set.order_by("position").select_related(
         "owner", "project", "project__owner"
     )
+    is_deletable = cards.count() == 0 and column.project.column_set.count() > 1
+
     return TemplateResponse(
-        request, "columns/detail.html", {"column": column, "cards": cards}
+        request,
+        "columns/detail.html",
+        {"column": column, "cards": cards, "is_deletable": is_deletable},
     )
 
 
@@ -80,6 +84,8 @@ def delete_column(request, column_id):
     has_perm_or_403(request.user, "columns.delete_column", column)
     if column.card_set.count() > 0:
         messages.error(request, _("You cannot delete a column containing cards"))
+    elif column.project.column_set.count() == 1:
+        messages.error(request, _("You must have at least one column per project"))
     else:
         column.delete()
         messages.info(request, _("Column has been deleted"))
