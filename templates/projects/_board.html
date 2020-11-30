@@ -1,4 +1,5 @@
-{% load i18n %}
+{% load i18n rules %}
+{% has_perm "columns.move_columns" user project as can_move_columns %}
 <div class="lg:flex lg:overflow-x-auto lg:whitespace-no-wrap "
      {% spaceless %}
      {% if can_move_columns %}
@@ -25,28 +26,8 @@
          data-drag-group="shared-tasks"
          data-drag-url="{% url 'cards:move_cards' column.id %}">
       {% for card in cards %}
-      {% if card.column == column and card.swimlane == swimlane %}
-      {% has_perm "cards.move_card" user card as can_move_card %}
-      <div class="p-2 mb-3 border rounded bg-blue-500 text-white{% if can_move_card %} draggable{% endif %}"
-           {% spaceless %}
-           {% if can_move_card %}
-           data-id="{{ card.id }}"
-           data-group="shared-tasks"
-           data-target="drag.draggable"
-           {% endif %}{% endspaceless %}>
-        <div class="mb-1">
-          <a href="{{ card.get_absolute_url }}"
-             class="underline font-bold">{{ card.name }}</a>
-        </div>
-        <div>
-          <span class="font-semibold"
-                title="{% translate 'Priority' %}">P {{ card.priority }}</span> /
-          <span class="font-semibold"
-                title="{% translate 'Complexity' %}">C {{ card.complexity }}</span> /
-          <span class="font-semibold"
-                title="{% translate 'Estimated Hours' %}">H {{ card.hours_estimated }}</span>
-        </div>
-      </div>
+      {% if card.column == column %}
+      {% include "projects/_card.html" %}
       {% endif %}
       {% endfor %}
     </div>

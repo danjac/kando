@@ -5,6 +5,7 @@ from django.urls import reverse
 import pytest
 
 # Kando
+from kando.cards.factories import CardFactory
 from kando.columns.factories import ColumnFactory
 from kando.swimlanes.factories import SwimlaneFactory
 
@@ -41,6 +42,15 @@ class TestCreateProject:
 
         assert response.url == project.get_absolute_url()
         assert project.owner == login_user
+
+
+class TestProjectBoard:
+    def test_get(self, client, login_user):
+        project = ProjectFactory(owner=login_user, name="Test Project")
+        for column in ColumnFactory.create_batch(3, project=project):
+            CardFactory.create_batch(12, column=column, project=project)
+        response = client.get(reverse("projects:project_board", args=[project.id]))
+        assert response.status_code == 200
 
 
 class TestDuplicateProject:
