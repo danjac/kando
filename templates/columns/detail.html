@@ -34,7 +34,7 @@
       {% if can_create_card %}
       <a href="{% url 'cards:create_card_for_column' column.project.id column.id %}"
          class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
-        <i class="fa fa-plus mr-2"></i>{% translate "Add Another Card" %}
+        <i class="fa fa-plus mr-2"></i>{% translate "Add Card" %}
       </a>
       {% endif %}
 

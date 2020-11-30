@@ -14,9 +14,11 @@
       action="{% url 'account_login' %}"
       novalidate>
   {% csrf_token %}
+  {% if redirect_field_value %}
   <input type="hidden"
          name="{{ redirect_field_name }}"
          value="{{ redirect_field_value }}" />
+  {% endif %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   {% with WIDGET_ERROR_CLASS="border-red-800 text-red-800" %}
   <div class="mb-3">
