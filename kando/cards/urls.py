@@ -22,4 +22,9 @@ urlpatterns = [
         views.create_card,
         name="create_card_for_column",
     ),
+    path(
+        "<int:project_id>/<int:column_id>/<int:swimlane_id>/~create/",
+        views.create_card,
+        name="create_card_for_swimlane",
+    ),
 ]

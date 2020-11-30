@@ -11,6 +11,13 @@
     {{ card.project.name }}
   </a>
   <span class="text-gray-500 mr-2">&gt;</span>
+  {% if card.swimlane %}
+  <a href="{{ card.swimlane.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ card.swimlane.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  {% endif %}
   <a href="{{ card.column.get_absolute_url }}"
      class="text-blue-800 hover:text-blue-600 mr-2">
     {{ card.column.name }}

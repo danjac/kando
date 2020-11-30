@@ -58,7 +58,7 @@ def create_card(request, project_id, column_id=None, swimlane_id=None):
 def card_detail(request, card_id):
     card = get_object_or_404(
         Card.objects.select_related(
-            "project", "column", "project__owner", "assignee", "owner"
+            "project", "column", "swimlane", "project__owner", "assignee", "owner"
         ),
         pk=card_id,
     )
@@ -82,7 +82,10 @@ def card_detail(request, card_id):
 @login_required
 def edit_card(request, card_id):
     card = get_object_or_404(
-        Card.objects.select_related("project", "project__owner", "owner"), pk=card_id,
+        Card.objects.select_related(
+            "project", "column", "swimlane", "project__owner", "owner"
+        ),
+        pk=card_id,
     )
     has_perm_or_403(request.user, "cards.change_card", card)
     if request.method == "POST":
