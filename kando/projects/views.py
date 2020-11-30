@@ -11,7 +11,7 @@ from kando.users.utils import has_perm_or_403
 
 # Local
 from .forms import ProjectCreationForm, ProjectForm
-from .models import Project
+from .models import Project, ProjectMember
 
 
 @login_required
@@ -94,4 +94,34 @@ def project_members(request, project_id):
 
     return TemplateResponse(
         request, "projects/members.html", {"project": project, "members": members}
+    )
+
+
+@login_required
+def project_member_detail(request, project_id, username):
+    member = get_object_or_404(
+        ProjectMember.objects.select_related(
+            "project", "user", "project__owner"
+        ).filter(user__username__iexact=username),
+        project_id=project_id,
+    )
+    has_perm_or_403(request.user, "projects.view_member", member)
+    owned_cards = (
+        member.user.owned_cards.filter(project=member.project)
+        .order_by("-priority", "-created")
+        .select_related("project", "column", "owner", "assignee")
+    )
+    assigned_cards = (
+        member.user.assigned_cards.filter(project=member.project)
+        .order_by("-priority", "-created")
+        .select_related("project", "column", "owner", "assignee")
+    )
+    return TemplateResponse(
+        request,
+        "projects/member_detail.html",
+        {
+            "member": member,
+            "owned_cards": owned_cards,
+            "assigned_cards": assigned_cards,
+        },
     )

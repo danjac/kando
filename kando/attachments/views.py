@@ -1,6 +1,8 @@
 # Django
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 # Kando
@@ -42,4 +44,5 @@ def delete_attachment(request, attachment_id):
     )
     has_perm_or_403(request.user, "attachments.delete_attachment", attachment)
     attachment.delete()
+    messages.info(request, _("Attachment has been deleted"))
     return redirect(attachment.card)

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n rules %}
+
+{% block content %}
+
+<div class="text-sm flex items-center mb-3">
+  <a href="{% url 'projects:projects_overview' %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <span class="text-gray-500">
+    {{ project.name }}
+  </span>
+</div>
+
+
+{% endblock content %}

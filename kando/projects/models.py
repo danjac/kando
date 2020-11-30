@@ -89,3 +89,11 @@ class ProjectMember(TimeStampedModel):
                 name="unique_project_member", fields=["project", "user"]
             )
         ]
+
+    def __str__(self):
+        return str(self.user)
+
+    def get_absolute_url(self):
+        return reverse(
+            "projects:member_detail", args=[self.project.id, self.user.username]
+        )
