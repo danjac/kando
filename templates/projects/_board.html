@@ -4,11 +4,7 @@
      {% if can_move_columns %}
      data-controller="drag"
      data-drag-group="shared-columns"
-     {% if swimlane %}
-     data-drag-url="{% url 'columns:move_columns_in_swimlane' project.id swimlane.id %}"
-     {% else %}
      data-drag-url="{% url 'columns:move_columns' project.id %}"
-     {% endif %}
      {% endif %}{% endspaceless %}>
   {% for column in columns %}
   <div class="mb-1 lg:mb-0 lg:mr-1 border{% if can_move_columns %} draggable{% endif %}"
