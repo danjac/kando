@@ -56,6 +56,13 @@
         <i class="fa fa-users mr-2"></i>{% translate "Users and Permissions" %}
       </a>
 
+      <button data-controller="ajax"
+              data-ajax-url="{% url 'projects:duplicate_project' project.id %}"
+              data-action="toggle#toggle ajax#post"
+              class="block p-1 rounded hover:bg-gray-100 w-full text-left">
+        <i class="fa fa-copy mr-2"></i>{% translate "Duplicate Project" %}
+      </button>
+
       {% if can_delete_project %}
       <button data-controller="ajax"
               data-ajax-confirm="{% translate 'Are you sure you want to delete this project?' %}"
