@@ -9,6 +9,7 @@ urlpatterns = [
     path("", include("kando.projects.urls")),
     path("cards/", include("kando.cards.urls")),
     path("columns/", include("kando.columns.urls")),
+    path("swimlanes/", include("kando.swimlanes.urls")),
     path("tasks/", include("kando.tasks.urls")),
     path("attachments/", include("kando.attachments.urls")),
     path("invites/", include("kando.invites.urls")),
