@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n widget_tweaks %}
+
+{% block content %}
+<div class="text-sm flex items-center mb-3">
+  <a href="{% url 'projects:projects_overview' %}"
+     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  <a href="{{ project.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ project.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  {% if swimlane %}
+  <span class="text-gray-500">{% translate "Edit Swimlane" %}</span>
+  {% else %}
+  <span class="text-gray-500">{% translate "New Swimlane" %}</span>
+  {% endif %}
+</div>
+
+
+<h1 class="text-xl font-bold mb-3">
+  {% if swimlane %}
+  {% translate "Edit Swimlane" %}
+  {% else %}
+  {% translate "New Swimlane" %}
+  {% endif %}
+</h1>
+<form class="p-3 bg-white border rounded w-full lg:w-2/3{% if form.errors %} border-red-800{% endif %}"
+      data-controller="form"
+      data-action="form#submit"
+      method="post"
+      action="{{ request.path }}"
+      novalidate>
+  {% csrf_token %}
+  {% with WIDGET_ERROR_CLASS="border-red-800 text-red-800" %}
+  <div class="mb-3">
+    <label class="font-semibold">
+      {{ form.name.label }}
+      {% render_field form.name class="p-1 w-full lg:w-96 lg:ml-3" %}
+    </label>
+    {% include "_form_errors.html" with errors=form.name.errors %}
+    {% include "_form_help_text.html" with help_text=form.name.help_text %}
+  </div>
+  {% endwith %}
+  <div class="flex items-center justify-end">
+    <a href="{{ project.get_absolute_url }}"
+       class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
+    <button type="submit"
+            class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
+      {% if swimlane %}
+      {% translate "Save Swimlane" %}
+      {% else %}
+      {% translate "Create Swimlane" %}
+      {% endif %}
+    </button>
+  </div>
+</form>
+{% endblock %}
