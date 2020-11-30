@@ -1,16 +1,16 @@
 # Standard Library
-import json
 
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 # Kando
+from kando.common.utils import sort_draggable_items
 from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
 
@@ -78,20 +78,9 @@ def delete_column(request, column_id):
 def move_columns(request, project_id):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
 
-    try:
-        column_ids = [int(pk) for pk in json.loads(request.body)["items"]]
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest("Invalid payload")
+    for position, column in sort_draggable_items(
+        request, project.column_set.all(), ["position"]
+    ):
+        column.position = position
 
-    qs = project.column_set.all()
-    columns = qs.in_bulk()
-    for_update = []
-
-    for position, column_id in enumerate(column_ids, 1):
-        column = columns.get(column_id)
-        if column:
-            column.position = position
-            for_update.append(column)
-
-    qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=204)

@@ -1,10 +1,7 @@
-# Standard Library
-import json
-
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -12,6 +9,7 @@ from django.views.decorators.http import require_POST
 
 # Kando
 from kando.columns.models import Column
+from kando.common.utils import sort_draggable_items
 from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
 
@@ -105,24 +103,13 @@ def delete_card(request, card_id):
 def move_cards(request, column_id):
     column = get_object_or_404(Column.objects.select_related("project"), pk=column_id)
 
-    try:
-        card_ids = [int(pk) for pk in json.loads(request.body)["items"]]
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest("Invalid payload")
-
     qs = column.project.card_set.select_related(
         "project", "project__owner", "assignee", "owner"
     )
-    cards = qs.in_bulk()
-    for_update = []
 
-    for position, card_id in enumerate(card_ids, 1):
-        card = cards.get(card_id)
-        if card:
-            has_perm_or_403(request.user, "cards.move_card", card)
-            card.position = position
-            card.column_id = column_id
-            for_update.append(card)
+    for position, card in sort_draggable_items(request, qs, ["position", "column"]):
+        has_perm_or_403(request.user, "cards.move_card", card)
+        card.position = position
+        card.column_id = column_id
 
-    qs.bulk_update(for_update, ["position", "column"])
     return HttpResponse(status=204)
