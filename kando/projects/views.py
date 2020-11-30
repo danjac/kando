@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from kando.users.utils import has_perm_or_403
 
 # Local
-from .forms import ProjectCreationForm, ProjectForm
+from .forms import ProjectCreationForm, ProjectForm, ProjectMemberRoleForm
 from .models import Project, ProjectMember
 
 
@@ -118,6 +118,27 @@ def project_members(request, project_id):
 
 
 @login_required
+@require_POST
+def change_member_role(request, member_id):
+    member = get_object_or_404(
+        ProjectMember.objects.select_related("user", "project", "project__owner"),
+        pk=member_id,
+    )
+    has_perm_or_403(request.user, "projects.change_member_role", member)
+
+    form = ProjectMemberRoleForm(request.POST, instance=member)
+    if form.is_valid():
+        member = form.save()
+        messages.success(
+            request,
+            _("Member %(name)s has been updated to %(role)s")
+            % {"name": member.user.username, "role": member.get_role_display()},
+        )
+
+    return redirect("projects:member_detail", member.project.id, member.user.username)
+
+
+@login_required
 def project_member_detail(request, project_id, username):
 
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
@@ -128,6 +149,7 @@ def project_member_detail(request, project_id, username):
         is_owner = True
         member = None
         user = project.owner
+        member_role_form = None
     else:
         member = (
             ProjectMember.objects.select_related("project", "user", "project__owner")
@@ -136,6 +158,7 @@ def project_member_detail(request, project_id, username):
         )
         is_owner = False
         user = member.user
+        member_role_form = ProjectMemberRoleForm(instance=member)
 
     if not is_owner and not member:
         raise Http404()
@@ -154,6 +177,7 @@ def project_member_detail(request, project_id, username):
             "project": project,
             "user_obj": user,
             "member": member,
+            "member_role_form": member_role_form,
             "is_owner": is_owner,
             "owned_cards": owned_cards,
             "assigned_cards": assigned_cards,

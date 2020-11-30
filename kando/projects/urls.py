@@ -11,6 +11,11 @@ urlpatterns = [
     path("<int:project_id>/board/", views.project_board, name="project_board"),
     path("<int:project_id>/members/", views.project_members, name="project_members"),
     path(
+        "<int:member_id>/~/change-role/",
+        views.change_member_role,
+        name="change_member_role",
+    ),
+    path(
         "<int:project_id>/member/<slug:username>/",
         views.project_member_detail,
         name="member_detail",

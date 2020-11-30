@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n account rules %}
+{% load i18n account rules widget_tweaks %}
 
 {% block content %}
 
@@ -14,7 +14,47 @@
   <span class="text-gray-500">{% user_display user_obj %}</span>
 </div>
 
-<h1 class="text-xl font-semibold mb-3">{% user_display user_obj %} - {% if member %}{{ member.get_role_display }}{% else %}{% translate "Project Owner" %}{% endif %}</h1>
+<h1 class="text-xl font-bold mb-3">{% user_display user_obj %}</h1>
+
+{% if member %}
+{% has_perm "projects.change_member_role" user member as can_change_member_role %}
+<div class="flex items-center mb-3"
+     data-controller="toggle">
+  <h2 class="text-lg font-semibold mr-4"
+      data-target="toggle.item">{{ member.get_role_display }}</h2>
+  {% if can_change_member_role %}
+  <button class="rounded px-2 py-1 border hover:bg-gray-100"
+          data-action="toggle#toggle"
+          data-target="toggle.item">
+    <i class="fa fa-pen mr-2"></i>
+    {% translate "Edit" %}
+  </button>
+  <div class="hidden"
+       data-target="toggle.item">
+    <form data-controller="form"
+          data-action="form#submit"
+          method="post"
+          action="{% url 'projects:change_member_role' member.id %}">
+      {% render_field member_role_form.role class="" %}
+      <div class="flex items-center">
+        <button class="text-blue-800 hover:text-blue-600 mr-4"
+                data-action="form#reset toggle#toggle">
+          {% translate "Cancel" %}
+          <button type="submit"
+                  class="text-white bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded">
+            {% translate "Save" %}
+          </button>
+        </button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<h2 class="text-lg font-semibold mb-3">{% translate "Project Owner" %}</h2>
+{% endif %}
+
+
 
 {% if owned_cards %}
 <h2 class="text-lg font-semibold mb-3">{% translate "Owned Cards" %}</h2>
@@ -46,13 +86,13 @@
         {% translate "Unassigned" %}
         {% endif %}
       </td>
-       <td class="p-2">
+      <td class="p-2">
         <a href="{{ card.column.get_absolute_url }}"
            class="text-blue-800 hover:text-blue-600">
           {{ card.column.name }}
         </a>
       </td>
-     <td class="p-2">{{ card.priority }}</td>
+      <td class="p-2">{{ card.priority }}</td>
       <td class="p-2">{{ card.complexity }}</td>
       <td class="p-2">{{ card.hours_estimated }}</td>
     </tr>
