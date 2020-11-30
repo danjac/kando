@@ -74,10 +74,11 @@ def duplicate_project(request, project_id):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.view_project", project)
 
-    duplicate = Project(name=f"[DUPLICATE] {project.name}")
-    duplicate.owner = request.user
-    duplicate.description = project.description
-    duplicate.save()
+    duplicate = Project.objects.create(
+        name=f"[DUPLICATE] {project.name}",
+        description=project.description,
+        owner=request.user,
+    )
 
     for column in project.column_set.all():
         duplicate.column_set.create(name=column.name, position=column.position)
