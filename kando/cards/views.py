@@ -20,7 +20,7 @@ from .models import Card
 
 
 @login_required
-def create_card(request, project_id, column_id=None):
+def create_card(request, project_id, column_id=None, swimlane_id=None):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "cards.create_card", project)
 
@@ -28,6 +28,11 @@ def create_card(request, project_id, column_id=None):
         column = get_object_or_404(project.column_set.all(), pk=column_id)
     else:
         column = None
+
+    if swimlane_id:
+        swimlane = get_object_or_404(project.swimlane_set.all(), pk=swimlane_id)
+    else:
+        swimlane = None
 
     if request.method == "POST":
         form = CardForm(request.POST, project=project)
@@ -39,7 +44,9 @@ def create_card(request, project_id, column_id=None):
             messages.success(request, _("Your card has been added"))
             return redirect(card)
     else:
-        form = CardForm(initial={"column": column}, project=project)
+        form = CardForm(
+            initial={"column": column, "swimlane": swimlane}, project=project
+        )
     return TemplateResponse(
         request,
         "cards/card_form.html",
