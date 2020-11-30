@@ -85,7 +85,7 @@ class TestCreateCard:
             reverse("cards:create_card_for_column", args=[project.id, columns[0].id])
         )
         assert response.status_code == 200
-        assert response.context["form"].initial["column"] == columns[0].id
+        assert response.context["form"].initial["column"] == columns[0]
 
 
 class TestMoveCards:
