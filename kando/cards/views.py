@@ -110,6 +110,6 @@ def move_cards(request, column_id):
     for position, card in sort_draggable_items(request, qs, ["position", "column"]):
         has_perm_or_403(request.user, "cards.move_card", card)
         card.position = position
-        card.column_id = column_id
+        card.column = column
 
     return HttpResponse(status=204)
