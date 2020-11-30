@@ -11,6 +11,7 @@ from kando.columns.models import Column
 from kando.common.dragdrop import sort_draggable_items
 from kando.common.http import HttpResponseNoContent
 from kando.projects.models import Project
+from kando.swimlanes.models import Swimlane
 from kando.users.utils import has_perm_or_403
 
 # Local
@@ -107,8 +108,16 @@ def delete_card(request, card_id):
 
 @login_required
 @require_POST
-def move_cards(request, column_id):
-    column = get_object_or_404(Column.objects.select_related("project"), pk=column_id)
+def move_cards(request, column_id, swimlane_id=None):
+    column = get_object_or_404(
+        Column.objects.select_related("project", "project__owner"), pk=column_id
+    )
+    if swimlane_id:
+        swimlane = get_object_or_404(
+            Swimlane.objects.filter(project=column.project), pk=swimlane_id
+        )
+    else:
+        swimlane = None
 
     qs = column.project.card_set.select_related(
         "project", "project__owner", "assignee", "owner"
@@ -118,5 +127,6 @@ def move_cards(request, column_id):
         has_perm_or_403(request.user, "cards.move_card", card)
         card.position = position
         card.column = column
+        card.swimlane = swimlane
 
     return HttpResponseNoContent()

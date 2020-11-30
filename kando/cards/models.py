@@ -72,7 +72,7 @@ class Card(TimeStampedModel):
 
     objects = CardManager()
 
-    tracker = FieldTracker(fields=["column"])
+    tracker = FieldTracker(fields=["column", "swimlane"])
 
     def __str__(self):
         return self.name
@@ -81,7 +81,11 @@ class Card(TimeStampedModel):
         return reverse("cards:card_detail", args=[self.id])
 
     def save(self, *args, **kwargs):
-        if not self.position or self.tracker.has_changed("column"):
+        if (
+            not self.position
+            or self.tracker.has_changed("column")
+            or self.tracker.has_changed("swimlane")
+        ):
             self.position = (
                 self.column.card_set.aggregate(models.Max("position"))["position__max"]
                 or 0

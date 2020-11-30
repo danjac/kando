@@ -72,59 +72,19 @@
 
 </div>
 
-<div class="lg:flex lg:overflow-x-auto lg:whitespace-no-wrap "
-     {% spaceless %}
-     {% if can_move_columns %}
-     data-controller="drag"
-     data-drag-group="shared-columns"
-     data-drag-url="{% url 'columns:move_columns' project.id %}"
-     {% endif %}{% endspaceless %}>
-  {% for column in columns %}
-  <div class="mb-1 lg:mb-0 lg:mr-1 border{% if can_move_columns %} draggable{% endif %}"
-       {% spaceless %}
-       {% if can_move_columns %}
-       data-target="drag.draggable"
-       data-group="shared-columns"
-       data-id="{{ column.id }}"
-       {% endif %}{% endspaceless %}>
-    <div class="bg-gray-100 flex justify-center font-bold text-lg lg:w-64 p-2">
-      <a href="{{ column.get_absolute_url }}"
-         class="text-blue-800 hover:text-blue-600 underline">
-        {{ column.name }}
-      </a>
-    </div>
-    <div class="p-2 bg-white"
-         data-controller="drag"
-         data-drag-group="shared-tasks"
-         data-drag-url="{% url 'cards:move_cards' column.id %}">
-      {% for card in cards %}
-      {% if card.column == column %}
-      {% has_perm "cards.move_card" user card as can_move_card %}
-      <div class="p-2 mb-3 border rounded bg-blue-500 text-white{% if can_move_card %} draggable{% endif %}"
-           {% spaceless %}
-           {% if can_move_card %}
-           data-id="{{ card.id }}"
-           data-group="shared-tasks"
-           data-target="drag.draggable"
-           {% endif %}{% endspaceless %}>
-        <div class="mb-1">
-          <a href="{{ card.get_absolute_url }}"
-             class="underline font-bold">{{ card.name }}</a>
-        </div>
-        <div>
-          <span class="font-semibold"
-                title="{% translate 'Priority' %}">P {{ card.priority }}</span> /
-          <span class="font-semibold"
-                title="{% translate 'Complexity' %}">C {{ card.complexity }}</span> /
-          <span class="font-semibold"
-                title="{% translate 'Estimated Hours' %}">H {{ card.hours_estimated }}</span>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
+{% include "_board.html" with swimlane=None %}
+
+{% if swimlanes %}
+<div data-controller="drag"
+     data-drag-group="shared-swimlanes">
+  {% for swimlane in swimlanes %}
+  <div class="mb-3 draggable"
+       data-id="{{ swimlane.id }}"
+       data-group="shared-swimlanes"
+       data-target="drag.draggable">
+    <div class="bg-blue-800 text-white font-semibold text-lg">{{ swimlane.name }}</div>
+    {% include "_board.html" with swimlane=None %}
   </div>
   {% endfor %}
-</div>
-
-{% endblock content %}
+  {% endif %}
+  {% endblock content %}

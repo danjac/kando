@@ -13,6 +13,11 @@ urlpatterns = [
     path("<int:project_id>/~create/", views.create_card, name="create_card"),
     path("<int:column_id>/~move/", views.move_cards, name="move_cards"),
     path(
+        "<int:column_id>/<int:swimlane_id>/~move/",
+        views.move_cards,
+        name="move_cards_in_swimlane",
+    ),
+    path(
         "<int:project_id>/<int:column_id>/~create/",
         views.create_card,
         name="create_card_for_column",
