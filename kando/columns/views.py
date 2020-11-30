@@ -51,7 +51,7 @@ def edit_column(request, column_id):
             messages.success(request, _("Column has been updated"))
             return redirect(column.project)
     else:
-        form = ColumnForm()
+        form = ColumnForm(instance=column)
     return TemplateResponse(
         request,
         "columns/column_form.html",

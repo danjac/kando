@@ -14,7 +14,7 @@
   {% if column %}
   <span class="text-gray-500">{% translate "Edit Column" %}</span>
   {% else %}
-  <span class="text-gray-500">{% translate "New Card" %}</span>
+  <span class="text-gray-500">{% translate "New Column" %}</span>
   {% endif %}
 </div>
 
@@ -44,10 +44,8 @@
   </div>
   {% endwith %}
   <div class="flex items-center justify-end">
-    {% if column %}
     <a href="{{ project.get_absolute_url }}"
        class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
-    {% endif %}
     <button type="submit"
             class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">
       {% if column %}

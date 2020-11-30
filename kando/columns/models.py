@@ -10,7 +10,7 @@ from kando.projects.models import Project
 
 class Column(TimeStampedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=60)
     position = models.IntegerField(default=0)
     show_in_dashboard = models.BooleanField(default=True)
 

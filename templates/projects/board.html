@@ -37,6 +37,13 @@
       </a>
       {% endif %}
 
+      {% if can_create_column %}
+      <a href="{% url 'columns:create_column' project.id %}"
+         class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
+        <i class="fa fa-plus mr-2"></i>{% translate "Add Column" %}
+      </a>
+      {% endif %}
+
       {% if can_change_project %}
       <a href="{% url 'projects:edit_project' project.id %}"
          class="block p-1 rounded hover:bg-gray-100 w-full mb-2">
@@ -65,7 +72,7 @@
 
 </div>
 
-<div class="md:flex md:overflow-y-auto md:whitespace-no-wrap"
+<div class="lg:flex lg:overflow-x-auto lg:whitespace-no-wrap "
      {% spaceless %}
      {% if can_move_columns %}
      data-controller="drag"
@@ -73,17 +80,23 @@
      data-drag-url="{% url 'columns:move_columns' project.id %}"
      {% endif %}{% endspaceless %}>
   {% for column in columns %}
-  <div class="mb-1 md:mb-0 md:mr-1 md:w-1/4 border draggable"
+  <div class="mb-1 lg:mb-0 lg:mr-1 border draggable"
        data-target="drag.draggable"
        data-group="shared-columns"
        data-id="{{ column.id }}">
-    <div class="bg-gray-100 flex items-center justify-start md:justify-center font-bold text-lg p-2">
-      {{ column.name }}
-      <a class="ml-2 focus:outline-none"
+    <div class="bg-gray-100 flex items-center font-bold text-lg lg:w-64 p-2">
+      {% if can_create_card %}
+      <a class="mr-3"
          title="Add New Card"
          href="{% url 'cards:create_card_for_column' project.id column.id %}">
         <i class="fa fa-plus"></i>
       </a>
+      {% endif %}
+
+      <a href="" class="text-blue-800 hover:text-blue-600 underline">
+      {{ column.name }}
+      </a>
+
     </div>
     <div class="p-2 bg-white"
          data-controller="drag"

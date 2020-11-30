@@ -14,11 +14,10 @@ def get_draggable_items(request, json_field="items"):
 
 
 def sort_draggable_items(request, queryset, fields=None, start=1, json_field="items"):
-    """Handles sorting of draggable items"""
-    item_ids = get_draggable_items(request, json_field)
+    """Handles bulk sorting of draggable items."""
     items = queryset.in_bulk()
     for_update = []
-    for position, item_id in enumerate(item_ids, start):
+    for position, item_id in enumerate(get_draggable_items(request, json_field), start):
         item = items.get(item_id)
         if item:
             yield position, item
