@@ -8,8 +8,8 @@ from django.views.decorators.http import require_POST
 
 # Kando
 from kando.columns.models import Column
+from kando.common.dragdrop import sort_draggable_items
 from kando.common.http import HttpResponseNoContent
-from kando.common.utils import sort_draggable_items
 from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
 

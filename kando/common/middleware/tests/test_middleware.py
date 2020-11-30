@@ -6,8 +6,8 @@ from django.test import override_settings
 import pytest
 
 # Local
-from ...utils import Http400
 from ..http import (
+    Http400,
     HttpResponseBadRequestExceptionMiddleware,
     HttpResponseNotAllowedMiddleware,
 )
