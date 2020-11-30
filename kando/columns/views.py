@@ -20,6 +20,20 @@ from .models import Column
 
 
 @login_required
+def column_detail(request, column_id):
+    column = get_object_or_404(
+        Column.objects.select_related("project", "project__owner"), pk=column_id
+    )
+    has_perm_or_403(request.user, "columns.view_column", column)
+    cards = column.card_set.order_by("position").select_related(
+        "owner", "project", "project__owner"
+    )
+    return TemplateResponse(
+        request, "columns/detail.html", {"column": column, "cards": cards}
+    )
+
+
+@login_required
 def create_column(request, project_id):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "columns.create_column", project)
@@ -49,7 +63,7 @@ def edit_column(request, column_id):
         if form.is_valid():
             form.save()
             messages.success(request, _("Column has been updated"))
-            return redirect(column.project)
+            return redirect(column)
     else:
         form = ColumnForm(instance=column)
     return TemplateResponse(

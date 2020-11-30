@@ -1,5 +1,6 @@
 # Django
 from django.db import models
+from django.urls import reverse
 
 # Third Party Libraries
 from model_utils.models import TimeStampedModel
@@ -16,6 +17,9 @@ class Column(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("columns:column_detail", args=[self.id])
 
     def save(self, *args, **kwargs):
         if not self.position:

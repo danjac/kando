@@ -11,6 +11,13 @@
     {{ project.name }}
   </a>
   <span class="text-gray-500 mr-2">&gt;</span>
+  {% if column %}
+  <a href="{{ column.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-2">
+    {{ column.name }}
+  </a>
+  <span class="text-gray-500 mr-2">&gt;</span>
+  {% endif %}
   {% if card %}
   <a href="{{ card.get_absolute_url }}"
      class="text-blue-800 hover:text-blue-600 mr-2">
@@ -59,7 +66,7 @@
     </label>
     {% include "_form_errors.html" with errors=form.assignee.errors %}
   </div>
-   <div class="mb-3">
+  <div class="mb-3">
     <label class="font-semibold">
       {{ form.description.label }}
       {% render_field form.description class="p-1 w-full" %}
@@ -91,7 +98,7 @@
   </div>
   {% endwith %}
   <div class="flex justify-end items-center">
-    <a href="{% if card %}{{ card.get_absolute_url }}{% else %}{{ project.get_absolute_url }}{% endif %}"
+    <a href="{% if card %}{{ card.get_absolute_url }}{% elif column %}{{ column.get_absolute_url }}{% else %}{{ project.get_absolute_url }}{% endif %}"
        class="text-blue-800 hover:text-blue-600 mr-4">{% translate "Cancel" %}</a>
     <button type="submit"
             class="px-4 py-2 rounded bg-blue-800 hover:bg-blue-600 text-white">

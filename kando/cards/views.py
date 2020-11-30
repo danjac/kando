@@ -23,6 +23,11 @@ def create_card(request, project_id, column_id=None):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "cards.create_card", project)
 
+    if column_id:
+        column = get_object_or_404(project.column_set.all(), pk=column_id)
+    else:
+        column = None
+
     if request.method == "POST":
         form = CardForm(request.POST, project=project)
         if form.is_valid():
@@ -33,9 +38,11 @@ def create_card(request, project_id, column_id=None):
             messages.success(request, _("Your card has been added"))
             return redirect(card)
     else:
-        form = CardForm(initial={"column": column_id}, project=project)
+        form = CardForm(initial={"column": column}, project=project)
     return TemplateResponse(
-        request, "cards/card_form.html", {"form": form, "project": project}
+        request,
+        "cards/card_form.html",
+        {"form": form, "project": project, "column": column},
     )
 
 
@@ -109,6 +116,7 @@ def move_cards(request, column_id):
 
     for position, card in sort_draggable_items(request, qs, ["position", "column"]):
         has_perm_or_403(request.user, "cards.move_card", card)
+        print(position, card)
         card.position = position
         card.column = column
 
