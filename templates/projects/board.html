@@ -6,6 +6,7 @@
 {% has_perm "projects.change_project" user project as can_change_project %}
 {% has_perm "projects.delete_project" user project as can_delete_project %}
 {% has_perm "columns.create_column" user project as can_create_column %}
+{% has_perm "columns.move_columns" user project as can_move_columns %}
 {% has_perm "cards.create_card" user project as can_create_card %}
 
 <div class="text-sm flex items-center mb-3">
@@ -78,7 +79,6 @@
 
 </div>
 
-{% has_perm "columns.move_columns" user project as can_move_columns %}
 <div class="lg:flex lg:overflow-x-auto lg:whitespace-no-wrap "
      {% spaceless %}
      {% if can_move_columns %}
