@@ -59,15 +59,6 @@
     </label>
     {% include "_form_errors.html" with errors=form.column.errors %}
   </div>
-  {% if form.swimlane %}
-  <div class="mb-3">
-    <label class="font-semibold">
-      {{ form.swimlane.label }}
-      {% render_field form.swimlane class="p-1 lg:ml-3 w-full lg:w-64" %}
-    </label>
-    {% include "_form_errors.html" with errors=form.swimlane.errors %}
-  </div>
-  {% endif %}
   <div class="mb-3">
     <label class="font-semibold">
       {{ form.assignee.label }}
