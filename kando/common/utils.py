@@ -1,16 +1,16 @@
 # Standard Library
 import json
 
-# Django
-from django.http import HttpResponseBadRequest
+# Local
+from .http import Http400
 
 
 def get_draggable_items(request, json_field="items"):
     """Used with drag AJAX views, returns list of PKs"""
     try:
         return [int(item) for item in json.loads(request.body)[json_field]]
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest("Invalid payload")
+    except (json.JSONDecodeError, KeyError):
+        raise Http400(f"Invalid JSON payload, must contain {json_field}")
 
 
 def sort_draggable_items(request, queryset, fields=None, start=1, json_field="items"):

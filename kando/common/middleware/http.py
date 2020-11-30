@@ -1,7 +1,26 @@
 # Django
 from django.conf import settings
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import render
+
+# Local
+from ..http import Http400
+
+
+class HttpResponseBadRequestExceptionMiddleware:
+    """Handles Http400 exceptions"""
+
+    template_name = "400.html"
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+
+        try:
+            return self.get_response(request)
+        except Http400 as e:
+            return HttpResponseBadRequest(str(e))
 
 
 class HttpResponseNotAllowedMiddleware:

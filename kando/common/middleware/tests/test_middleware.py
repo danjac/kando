@@ -1,12 +1,16 @@
 # Django
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.test import override_settings
 
 # Third Party Libraries
 import pytest
 
 # Local
-from ..http import HttpResponseNotAllowedMiddleware
+from ...utils import Http400
+from ..http import (
+    HttpResponseBadRequestExceptionMiddleware,
+    HttpResponseNotAllowedMiddleware,
+)
 from ..turbolinks import TurbolinksMiddleware
 
 pytestmark = pytest.mark.django_db
@@ -14,10 +18,25 @@ pytestmark = pytest.mark.django_db
 
 @pytest.fixture
 def get_response_not_allowed():
-    def _get_response(req):
-        return HttpResponseNotAllowed(permitted_methods=["POST"])
+    return lambda req: HttpResponseNotAllowed(permitted_methods=["POST"])
 
-    return _get_response
+
+class TestHttpResponseBadRequestExceptionMiddleware:
+    def test_no_exception(self, rf):
+        req = rf.get("/")
+        mw = HttpResponseBadRequestExceptionMiddleware(lambda req: HttpResponse())
+        resp = mw(req)
+        assert resp.status_code == 200
+
+    def test_exception(self, rf):
+        req = rf.get("/")
+
+        def _get_response(req):
+            raise Http400
+
+        mw = HttpResponseBadRequestExceptionMiddleware(_get_response)
+        resp = mw(req)
+        assert resp.status_code == 400
 
 
 class TestHttpResponseNotAllowedMiddleware:
