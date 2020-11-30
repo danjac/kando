@@ -7,7 +7,6 @@ import pytest
 # Kando
 from kando.cards.factories import CardFactory
 from kando.columns.factories import ColumnFactory
-from kando.swimlanes.factories import SwimlaneFactory
 
 # Local
 from ..factories import ProjectFactory
@@ -57,7 +56,6 @@ class TestDuplicateProject:
     def test_post(self, client, login_user):
         project = ProjectFactory(owner=login_user, name="Test Project")
         ColumnFactory.create_batch(3, project=project)
-        SwimlaneFactory.create_batch(2, project=project)
 
         response = client.post(reverse("projects:duplicate_project", args=[project.id]))
         dupe = Project.objects.exclude(pk=project.id).first()
@@ -65,4 +63,3 @@ class TestDuplicateProject:
         assert dupe.name == "[DUPLICATE] Test Project"
         assert dupe.owner == login_user
         assert dupe.column_set.count() == 3
-        assert dupe.swimlane_set.count() == 2

@@ -11,7 +11,6 @@ from kando.columns.models import Column
 from kando.common.dragdrop import sort_draggable_items
 from kando.common.http import HttpResponseNoContent
 from kando.projects.models import Project
-from kando.swimlanes.models import Swimlane
 from kando.users.utils import has_perm_or_403
 
 # Local
@@ -20,7 +19,7 @@ from .models import Card
 
 
 @login_required
-def create_card(request, project_id, column_id=None, swimlane_id=None):
+def create_card(request, project_id, column_id=None):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "cards.create_card", project)
 
@@ -28,11 +27,6 @@ def create_card(request, project_id, column_id=None, swimlane_id=None):
         column = get_object_or_404(project.column_set.all(), pk=column_id)
     else:
         column = None
-
-    if swimlane_id:
-        swimlane = get_object_or_404(project.swimlane_set.all(), pk=swimlane_id)
-    else:
-        swimlane = None
 
     if request.method == "POST":
         form = CardForm(request.POST, project=project)
@@ -44,9 +38,7 @@ def create_card(request, project_id, column_id=None, swimlane_id=None):
             messages.success(request, _("Your card has been added"))
             return redirect(card)
     else:
-        form = CardForm(
-            initial={"column": column, "swimlane": swimlane}, project=project
-        )
+        form = CardForm(initial={"column": column}, project=project)
     return TemplateResponse(
         request,
         "cards/card_form.html",
@@ -58,7 +50,7 @@ def create_card(request, project_id, column_id=None, swimlane_id=None):
 def card_detail(request, card_id):
     card = get_object_or_404(
         Card.objects.select_related(
-            "project", "column", "swimlane", "project__owner", "assignee", "owner"
+            "project", "column", "project__owner", "assignee", "owner"
         ),
         pk=card_id,
     )
@@ -82,9 +74,7 @@ def card_detail(request, card_id):
 @login_required
 def edit_card(request, card_id):
     card = get_object_or_404(
-        Card.objects.select_related(
-            "project", "column", "swimlane", "project__owner", "owner"
-        ),
+        Card.objects.select_related("project", "column", "project__owner", "owner"),
         pk=card_id,
     )
     has_perm_or_403(request.user, "cards.change_card", card)
@@ -118,17 +108,10 @@ def delete_card(request, card_id):
 
 @login_required
 @require_POST
-def move_cards(request, column_id, swimlane_id=None):
+def move_cards(request, column_id):
     column = get_object_or_404(
         Column.objects.select_related("project", "project__owner"), pk=column_id
     )
-    if swimlane_id:
-        swimlane = get_object_or_404(
-            Swimlane.objects.filter(project=column.project), pk=swimlane_id
-        )
-    else:
-        swimlane = None
-
     qs = column.project.card_set.select_related(
         "project", "project__owner", "assignee", "owner"
     )
@@ -137,6 +120,5 @@ def move_cards(request, column_id, swimlane_id=None):
         has_perm_or_403(request.user, "cards.move_card", card)
         card.position = position
         card.column = column
-        card.swimlane = swimlane
 
     return HttpResponseNoContent()

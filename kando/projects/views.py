@@ -81,9 +81,6 @@ def duplicate_project(request, project_id):
     for column in project.column_set.all():
         duplicate.column_set.create(name=column.name, position=column.position)
 
-    for swimlane in project.swimlane_set.all():
-        duplicate.swimlane_set.create(name=swimlane.name, position=swimlane.position)
-
     messages.success(request, _("New project created"))
     return redirect(duplicate)
 
@@ -94,21 +91,15 @@ def project_board(request, project_id):
     has_perm_or_403(request.user, "projects.view_project", project)
 
     columns = project.column_set.order_by("position")
-    swimlanes = project.swimlane_set.order_by("position")
 
     cards = project.card_set.order_by("position").select_related(
-        "project", "owner", "column", "assignee", "swimlane"
+        "project", "owner", "column", "assignee",
     )
 
     return TemplateResponse(
         request,
         "projects/board.html",
-        {
-            "project": project,
-            "columns": columns,
-            "swimlanes": swimlanes,
-            "cards": cards,
-        },
+        {"project": project, "columns": columns, "cards": cards,},
     )
 
 
