@@ -3,13 +3,13 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 # Kando
+from kando.common.http import HttpResponseNoContent
 from kando.common.utils import sort_draggable_items
 from kando.projects.models import Project
 from kando.users.utils import has_perm_or_403
@@ -95,7 +95,6 @@ def move_columns(request, project_id):
     for position, column in sort_draggable_items(
         request, project.column_set.all(), ["position"]
     ):
-        print(column.id, position)
         column.position = position
 
-    return HttpResponse(status=204)
+    return HttpResponseNoContent()
