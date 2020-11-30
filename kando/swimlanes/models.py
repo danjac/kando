@@ -16,3 +16,13 @@ class Swimlane(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.position:
+            self.position = (
+                self.project.column_set.aggregate(models.Max("position"))[
+                    "position__max"
+                ]
+                or 0
+            ) + 1
+        return super().save(*args, **kwargs)
