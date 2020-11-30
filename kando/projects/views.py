@@ -69,6 +69,27 @@ def delete_project(request, project_id):
 
 
 @login_required
+@require_POST
+def duplicate_project(request, project_id):
+    project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
+    has_perm_or_403(request.user, "projects.view_project", project)
+
+    duplicate = Project(name=f"[DUPLICATE] {project.name}")
+    duplicate.owner = request.user
+    duplicate.description = project.description
+    duplicate.save()
+
+    for column in project.column_set.all():
+        duplicate.column_set.create(name=column.name, position=column.position)
+
+    for swimlane in project.swimlane_set.all():
+        duplicate.swimlane_set.create(name=swimlane.name, position=swimlane.position)
+
+    messages.success(request, _("New project created"))
+    return redirect(duplicate)
+
+
+@login_required
 def project_board(request, project_id):
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
     has_perm_or_403(request.user, "projects.view_project", project)

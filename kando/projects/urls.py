@@ -17,5 +17,10 @@ urlpatterns = [
     ),
     path("<int:project_id>/~edit/", views.edit_project, name="edit_project"),
     path("<int:project_id>/~delete/", views.delete_project, name="delete_project"),
+    path(
+        "<int:project_id>/~duplicate/",
+        views.duplicate_project,
+        name="duplicate_project",
+    ),
     path("~create/", views.create_project, name="create_project"),
 ]
