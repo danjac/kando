@@ -139,6 +139,26 @@ def change_member_role(request, member_id):
 
 
 @login_required
+@require_POST
+def remove_member(request, member_id):
+    member = get_object_or_404(
+        ProjectMember.objects.select_related("user", "project", "project__owner"),
+        pk=member_id,
+    )
+    has_perm_or_403(request.user, "projects.remove_member", member)
+
+    member.delete()
+
+    messages.info(
+        request,
+        _("Member %(name)s has been removed from this project")
+        % {"name": member.user.username,},
+    )
+
+    return redirect("projects:project_members", member.project.id)
+
+
+@login_required
 def project_member_detail(request, project_id, username):
 
     project = get_object_or_404(Project.objects.select_related("owner"), pk=project_id)
@@ -151,10 +171,10 @@ def project_member_detail(request, project_id, username):
         user = project.owner
         member_role_form = None
     else:
-        member = (
-            ProjectMember.objects.select_related("project", "user", "project__owner")
-            .filter(user__username__iexact=username, project=project)
-            .first()
+        member = get_object_or_404(
+            ProjectMember.objects.select_related("project", "user", "project__owner"),
+            user__username=username,
+            project=project,
         )
         is_owner = False
         user = member.user

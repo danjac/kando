@@ -17,18 +17,32 @@
 <h1 class="text-xl font-bold mb-3">{% user_display user_obj %}</h1>
 
 {% if member %}
+
 {% has_perm "projects.change_member_role" user member as can_change_member_role %}
+{% has_perm "projects.remove_member" user member as can_remove_member %}
+
 <div class="flex items-center mb-3"
      data-controller="toggle">
   <h2 class="text-lg font-semibold mr-4"
       data-target="toggle.item">{{ member.get_role_display }}</h2>
   {% if can_change_member_role %}
-  <button class="rounded px-2 py-1 border hover:bg-gray-100"
+  <button class="rounded px-2 py-1 border hover:bg-gray-100 mr-4"
           data-action="toggle#toggle"
           data-target="toggle.item">
     <i class="fa fa-pen mr-2"></i>
     {% translate "Edit" %}
   </button>
+  {% if can_remove_member %}
+   <button class="rounded px-2 py-1 border hover:bg-red-100 border-red-800 text-red-800"
+          data-controller="ajax"
+          data-action="ajax#post"
+          data-target="toggle.item"
+          data-ajax-confirm="{% translate 'Are you sure you want to remove this member from the project?' %}"
+          data-ajax-url="{% url 'projects:remove_member' member.id %}">
+    <i class="fa fa-times mr-2"></i>
+    {% translate "Remove" %}
+  </button>
+  {% endif %}
   <div class="hidden"
        data-target="toggle.item">
     <form data-controller="form"

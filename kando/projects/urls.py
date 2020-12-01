@@ -15,6 +15,7 @@ urlpatterns = [
         views.change_member_role,
         name="change_member_role",
     ),
+    path("<int:member_id>/~/remove/", views.remove_member, name="remove_member",),
     path(
         "<int:project_id>/member/<slug:username>/",
         views.project_member_detail,
