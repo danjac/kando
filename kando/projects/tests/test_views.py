@@ -69,6 +69,13 @@ class TestRemoveMember:
     def test_post(self, client, login_user):
         project = ProjectFactory(owner=login_user)
         member = ProjectMemberFactory(project=project)
+
+        card = CardFactory(project=project, owner=member.user)
+
         response = client.post(reverse("projects:remove_member", args=[member.id]))
         assert response.url == reverse("projects:project_members", args=[project.id])
         assert ProjectMember.objects.count() == 0
+
+        # ensure card ownership transferred to project owner
+        card.refresh_from_db()
+        assert card.owner == login_user
