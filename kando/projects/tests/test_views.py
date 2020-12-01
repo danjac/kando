@@ -9,8 +9,8 @@ from kando.cards.factories import CardFactory
 from kando.columns.factories import ColumnFactory
 
 # Local
-from ..factories import ProjectFactory
-from ..models import Project
+from ..factories import ProjectFactory, ProjectMemberFactory
+from ..models import Project, ProjectMember
 
 pytestmark = pytest.mark.django_db
 
@@ -63,3 +63,12 @@ class TestDuplicateProject:
         assert dupe.name == "[DUPLICATE] Test Project"
         assert dupe.owner == login_user
         assert dupe.column_set.count() == 3
+
+
+class TestRemoveMember:
+    def test_post(self, client, login_user):
+        project = ProjectFactory(owner=login_user)
+        member = ProjectMemberFactory(project=project)
+        response = client.post(reverse("projects:remove_member", args=[member.id]))
+        assert response.url == reverse("projects:project_members", args=[project.id])
+        assert ProjectMember.objects.count() == 0
