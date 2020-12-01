@@ -3,6 +3,8 @@ Simple Kanban board implementation using the Django saas-starter template:
 
 https://github.com/danjac/django-saas-starter
 
+![shot](/screenshots/shot_1.png)
+
 For local development:
 
     cp .env.example .env
