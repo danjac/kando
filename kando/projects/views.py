@@ -1,6 +1,7 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -8,6 +9,9 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 # Kando
+from kando.attachments.models import Attachment
+from kando.cards.models import Card
+from kando.tasks.models import Task
 from kando.users.utils import has_perm_or_403
 
 # Local
@@ -147,7 +151,24 @@ def remove_member(request, member_id):
     )
     has_perm_or_403(request.user, "projects.remove_member", member)
 
-    member.delete()
+    with transaction.atomic():
+
+        # transfer ownership of cards, tasks, and attachments to project owner
+        cards = Card.objects.filter(owner=member.user, project=member.project)
+        cards.update(owner=member.project.owner)
+
+        cards = Card.objects.filter(assignee=member.user, project=member.project)
+        cards.update(assignee=None)
+
+        tasks = Task.objects.filter(owner=member.user, card__project=member.project)
+        tasks.update(owner=member.project.owner)
+
+        attachments = Attachment.objects.filter(
+            owner=member.user, project=member.project
+        )
+        attachments.update(owner=member.project.owner)
+
+        member.delete()
 
     messages.info(
         request,
