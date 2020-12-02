@@ -47,21 +47,16 @@ is_card_manager = (
     | is_card_project_owner
 )
 
-is_card_project_owner_or_member = is_card_project_owner | is_card_project_member
-
-is_card_owner_or_assignee = (
-    is_card_owner | is_card_assignee
-) & is_card_project_owner_or_member
+is_card_owner_or_assignee = (is_card_owner | is_card_assignee) & is_card_project_member
 
 
 rules.add_perm(
     "cards.create_card", is_project_member | is_project_owner,
 )
 
-rules.add_perm("cards.view_card", is_card_project_owner_or_member)
-rules.add_perm("cards.change_card", is_card_manager & is_card_project_owner_or_member)
+rules.add_perm("cards.view_card", is_card_project_member)
+rules.add_perm("cards.change_card", is_card_manager & is_card_project_member)
 rules.add_perm(
-    "cards.move_card",
-    (is_card_manager | is_card_assignee) & is_card_project_owner_or_member,
+    "cards.move_card", (is_card_manager | is_card_assignee) & is_card_project_member,
 )
-rules.add_perm("cards.delete_card", is_card_manager & is_card_project_owner_or_member)
+rules.add_perm("cards.delete_card", is_card_manager & is_card_project_member)

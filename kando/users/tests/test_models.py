@@ -3,7 +3,7 @@ import pytest
 from allauth.account.models import EmailAddress
 
 # Kando
-from kando.projects.factories import ProjectMemberFactory
+from kando.projects.factories import ProjectFactory, ProjectMemberFactory
 from kando.projects.models import ProjectMember
 
 # Local
@@ -69,26 +69,36 @@ class TestUserModel:
         member_1 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MEMBER)
         member_2 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MANAGER)
         member_3 = ProjectMemberFactory(user=user, role=ProjectMember.Role.ADMIN)
-
         member_4 = ProjectMemberFactory()
+
+        own_project = ProjectFactory(owner=user)
 
         assert user.project_roles[member_1.project_id] == ProjectMember.Role.MEMBER
         assert user.project_roles[member_2.project_id] == ProjectMember.Role.MANAGER
         assert user.project_roles[member_3.project_id] == ProjectMember.Role.ADMIN
-
         assert member_4.project_id not in user.project_roles
+        assert own_project.id not in user.project_roles
 
         assert user.is_project_member(member_1.project)
         assert user.is_project_member(member_2.project)
         assert user.is_project_member(member_3.project)
         assert not user.is_project_member(member_4.project)
+        assert user.is_project_member(own_project)
 
         assert not user.is_project_manager(member_1.project)
         assert user.is_project_manager(member_2.project)
         assert not user.is_project_manager(member_3.project)
         assert not user.is_project_manager(member_4.project)
+        assert not user.is_project_manager(own_project)
 
         assert not user.is_project_admin(member_1.project)
         assert not user.is_project_admin(member_2.project)
         assert user.is_project_admin(member_3.project)
         assert not user.is_project_admin(member_4.project)
+        assert not user.is_project_admin(own_project)
+
+        assert not user.is_project_owner(member_1.project)
+        assert not user.is_project_owner(member_2.project)
+        assert not user.is_project_owner(member_3.project)
+        assert not user.is_project_owner(member_4.project)
+        assert user.is_project_owner(own_project)

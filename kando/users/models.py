@@ -76,10 +76,13 @@ class User(AbstractUser):
         }
 
     def is_project_member(self, project):
-        return project.id in self.project_roles
+        return project.id in self.project_roles or self.is_project_owner(project)
 
     def is_project_manager(self, project):
         return self.project_roles.get(project.id) == ProjectMember.Role.MANAGER
 
     def is_project_admin(self, project):
         return self.project_roles.get(project.id) == ProjectMember.Role.ADMIN
+
+    def is_project_owner(self, project):
+        return self == project.owner
