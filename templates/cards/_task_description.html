@@ -1,0 +1,15 @@
+      <input type="checkbox"
+             {% spaceless %}
+             {% if task.completed %}
+             checked{% endif %}
+             class="mr-4"
+             {% if can_change_task %}
+             data-action="ajax#post"
+             {% else %}
+             disabled
+             {% endif %}
+             {% endspaceless %}>
+      <span{% if task.completed %} class="line-through"
+                                   {% endif %}>
+        {{ task.description }}
+        </span>

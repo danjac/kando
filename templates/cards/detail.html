@@ -157,24 +157,12 @@
            data-target="drag.draggable">
         {% has_perm "tasks.change_task" user task as can_change_task %}
         {% has_perm "tasks.delete_task" user task as can_delete_task %}
-        <div class="flex items-center">
-          <input type="checkbox"
-                 {% spaceless %}
-                 {% if task.completed %}
-                 checked{% endif %}
-                 class="mr-4"
-                 {% if can_change_task %}
-                 data-controller="ajax"
-                 data-ajax-url="{% url 'tasks:toggle_complete' task.id %}"
-                 data-action="ajax#post"
-                 {% else %}
-                 disabled
-                 {% endif %}
-                 {% endspaceless %}>
-          <span{% if task.completed %} class="line-through"
-                                       {% endif %}>
-            {{ task.description }}
-            </span>
+        <div class="flex items-center"
+             {% if can_change_task %}
+             data-controller="ajax"
+             data-ajax-replace
+             data-ajax-url="{% url 'tasks:toggle_complete' task.id %}{% endif %}">
+          {% include "cards/_task_description.html" %}
         </div>
         <div>
           {% if can_change_task %}

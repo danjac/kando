@@ -1,6 +1,7 @@
 # Django
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -88,4 +89,10 @@ def toggle_task_complete(request, task_id):
     has_perm_or_403(request.user, "tasks.change_task", task)
     task.completed = None if task.completed else timezone.now()
     task.save()
+    if "X-Request-Fragment" in request.headers:
+        return TemplateResponse(
+            request,
+            "cards/_task_description.html",
+            {"task": task, "can_change_task": True},
+        )
     return redirect(task.card)
