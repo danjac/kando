@@ -154,19 +154,21 @@ def remove_member(request, member_id):
     with transaction.atomic():
 
         # transfer ownership of cards, tasks, and attachments to project owner
-        cards = Card.objects.filter(owner=member.user, project=member.project)
-        cards.update(owner=member.project.owner)
-
-        cards = Card.objects.filter(assignee=member.user, project=member.project)
-        cards.update(assignee=None)
-
-        tasks = Task.objects.filter(owner=member.user, card__project=member.project)
-        tasks.update(owner=member.project.owner)
-
-        attachments = Attachment.objects.filter(
-            owner=member.user, project=member.project
+        Card.objects.filter(owner=member.user, project=member.project).update(
+            owner=member.project.owner
         )
-        attachments.update(owner=member.project.owner)
+
+        Card.objects.filter(assignee=member.user, project=member.project).update(
+            assignee=None
+        )
+
+        Task.objects.filter(owner=member.user, card__project=member.project).update(
+            owner=member.project.owner
+        )
+
+        Attachment.objects.filter(owner=member.user, project=member.project).update(
+            owner=member.project.owner
+        )
 
         member.delete()
 
