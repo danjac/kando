@@ -64,7 +64,7 @@ class TestUserModel:
         assert user.email in emails
         assert "test1@gmail.com" in emails
 
-    def test_roles(self, user):
+    def test_project_roles(self, user):
 
         member_1 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MEMBER)
         member_2 = ProjectMemberFactory(user=user, role=ProjectMember.Role.MANAGER)
@@ -72,23 +72,23 @@ class TestUserModel:
 
         member_4 = ProjectMemberFactory()
 
-        assert user.roles[member_1.project_id] == ProjectMember.Role.MEMBER
-        assert user.roles[member_2.project_id] == ProjectMember.Role.MANAGER
-        assert user.roles[member_3.project_id] == ProjectMember.Role.ADMIN
+        assert user.project_roles[member_1.project_id] == ProjectMember.Role.MEMBER
+        assert user.project_roles[member_2.project_id] == ProjectMember.Role.MANAGER
+        assert user.project_roles[member_3.project_id] == ProjectMember.Role.ADMIN
 
-        assert member_4.project_id not in user.roles
+        assert member_4.project_id not in user.project_roles
 
-        assert user.is_member(member_1.project)
-        assert user.is_member(member_2.project)
-        assert user.is_member(member_3.project)
-        assert not user.is_member(member_4.project)
+        assert user.is_project_member(member_1.project)
+        assert user.is_project_member(member_2.project)
+        assert user.is_project_member(member_3.project)
+        assert not user.is_project_member(member_4.project)
 
-        assert not user.is_manager(member_1.project)
-        assert user.is_manager(member_2.project)
-        assert not user.is_manager(member_3.project)
-        assert not user.is_manager(member_4.project)
+        assert not user.is_project_manager(member_1.project)
+        assert user.is_project_manager(member_2.project)
+        assert not user.is_project_manager(member_3.project)
+        assert not user.is_project_manager(member_4.project)
 
-        assert not user.is_admin(member_1.project)
-        assert not user.is_admin(member_2.project)
-        assert user.is_admin(member_3.project)
-        assert not user.is_admin(member_4.project)
+        assert not user.is_project_admin(member_1.project)
+        assert not user.is_project_admin(member_2.project)
+        assert user.is_project_admin(member_3.project)
+        assert not user.is_project_admin(member_4.project)

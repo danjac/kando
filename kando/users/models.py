@@ -68,18 +68,18 @@ class User(AbstractUser):
         )
 
     @cached_property
-    def roles(self):
+    def project_roles(self):
         """Return projects I own/belong to as dict of {project_id: role}"""
         return {
             m.project_id: m.role
             for m in ProjectMember.objects.filter(user=self, is_active=True)
         }
 
-    def is_member(self, project):
-        return project.id in self.roles
+    def is_project_member(self, project):
+        return project.id in self.project_roles
 
-    def is_manager(self, project):
-        return self.roles.get(project.id) == ProjectMember.Role.MANAGER
+    def is_project_manager(self, project):
+        return self.project_roles.get(project.id) == ProjectMember.Role.MANAGER
 
-    def is_admin(self, project):
-        return self.roles.get(project.id) == ProjectMember.Role.ADMIN
+    def is_project_admin(self, project):
+        return self.project_roles.get(project.id) == ProjectMember.Role.ADMIN

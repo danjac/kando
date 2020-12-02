@@ -9,17 +9,17 @@ def is_project_owner(user, project):
 
 @rules.predicate
 def is_project_member(user, project):
-    return user.is_authenticated and user.is_member(project)
+    return user.is_authenticated and user.is_project_member(project)
 
 
 @rules.predicate
 def is_project_manager(user, project):
-    return user.is_authenticated and user.is_manager(project)
+    return user.is_authenticated and user.is_project_manager(project)
 
 
 @rules.predicate
 def is_project_admin(user, project):
-    return user.is_authenticated and user.is_admin(project)
+    return user.is_authenticated and user.is_project_admin(project)
 
 
 is_project_owner_or_member = is_project_owner | is_project_member
