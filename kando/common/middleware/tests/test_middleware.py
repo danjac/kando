@@ -6,6 +6,7 @@ from django.test import override_settings
 import pytest
 
 # Local
+from ..ajax import AjaxRequestFragmentMiddleware
 from ..http import (
     Http400,
     HttpResponseBadRequestExceptionMiddleware,
@@ -91,3 +92,34 @@ class TestTurbolinksMiddleware:
         resp = mw(req)
         assert resp["Location"] == "/"
         assert req.session["_turbolinks_redirect"] == "/"
+
+
+class TestAjaxRequestFragmentMiddleware:
+    def get_response(self):
+        return lambda req: HttpResponseRedirect("/")
+
+    def test_ajax_header_present(self, rf):
+        mw = AjaxRequestFragmentMiddleware(self.get_response())
+        req = rf.get(
+            "/", HTTP_X_REQUESTED_WITH="XMLHttpRequest", HTTP_X_REQUEST_FRAGMENT="true",
+        )
+        mw(req)
+        assert req.is_ajax_fragment
+
+    def test_ajax_header_not_present(self, rf):
+        mw = AjaxRequestFragmentMiddleware(self.get_response())
+        req = rf.get("/", HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+        mw(req)
+        assert not req.is_ajax_fragment
+
+    def test_not_ajax_header_present(self, rf):
+        mw = AjaxRequestFragmentMiddleware(self.get_response())
+        req = rf.get("/", HTTP_X_REQUEST_FRAGMENT="true",)
+        mw(req)
+        assert not req.is_ajax_fragment
+
+    def test_not_ajax_header_not_present(self, rf):
+        mw = AjaxRequestFragmentMiddleware(self.get_response())
+        req = rf.get("/",)
+        mw(req)
+        assert not req.is_ajax_fragment

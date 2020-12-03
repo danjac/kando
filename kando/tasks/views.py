@@ -89,7 +89,7 @@ def toggle_task_complete(request, task_id):
     has_perm_or_403(request.user, "tasks.change_task", task)
     task.completed = None if task.completed else timezone.now()
     task.save()
-    if "X-Request-Fragment" in request.headers:
+    if request.is_ajax_fragment:
         return TemplateResponse(
             request,
             "cards/_task_description.html",
