@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -28,10 +29,20 @@ def column_detail(request, column_id):
     )
     is_deletable = cards.count() == 0 and column.project.column_set.count() > 1
 
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (column.project.name, None),
+    ]
+
     return TemplateResponse(
         request,
         "columns/detail.html",
-        {"column": column, "cards": cards, "is_deletable": is_deletable},
+        {
+            "column": column,
+            "cards": cards,
+            "is_deletable": is_deletable,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 
@@ -49,8 +60,16 @@ def create_column(request, project_id):
             return redirect(project)
     else:
         form = ColumnForm()
+
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (_("New Column"), None),
+    ]
+
     return TemplateResponse(
-        request, "columns/column_form.html", {"form": form, "project": project}
+        request,
+        "columns/column_form.html",
+        {"form": form, "project": project, "breadcrumbs": breadcrumbs},
     )
 
 
@@ -68,10 +87,22 @@ def edit_column(request, column_id):
             return redirect(column)
     else:
         form = ColumnForm(instance=column)
+
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (column.name, column.get_absolute_url()),
+        (_("Edit Column"), None),
+    ]
+
     return TemplateResponse(
         request,
         "columns/column_form.html",
-        {"form": form, "project": column.project, "column": column},
+        {
+            "form": form,
+            "project": column.project,
+            "column": column,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 

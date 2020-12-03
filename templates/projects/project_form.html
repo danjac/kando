@@ -2,22 +2,8 @@
 {% load i18n widget_tweaks %}
 
 {% block content %}
-<div class="text-sm flex items-center mb-3">
-  <a href="{% url 'projects:projects_overview' %}"
-     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  {% if project %}
-  <a href="{{ project.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-2">
-    {{ project.name }}
-  </a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <span class="text-gray-500">{% translate "Edit Project" %}</span>
-  {% else %}
-  <span class="text-gray-500">{% translate "New Project" %}</span>
-  {% endif %}
-</div>
 
+{% include "_breadcrumbs.html" %}
 
 <h1 class="text-xl font-bold mb-3">
   {% if project %}

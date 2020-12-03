@@ -2,17 +2,7 @@
 {% load i18n account rules %}
 
 {% block content %}
-<div class="text-sm flex items-center mb-3">
-  <a href="{% url 'projects:projects_overview' %}"
-     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <a href="{{ column.project.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-2">
-    {{ column.project.name }}
-  </a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <span class="text-gray-500">{{ column.name }}</span>
-</div>
+{% include "_breadcrumbs.html" %}
 
 {% has_perm "cards.create_card" user column.project as can_create_card %}
 {% has_perm "columns.change_column" user column as can_change_column %}

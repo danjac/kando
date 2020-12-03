@@ -2,22 +2,8 @@
 {% load i18n account rules %}
 
 {% block content %}
-<div class="text-sm flex items-center mb-3">
-  <a href="{% url 'projects:projects_overview' %}"
-     class="text-blue-800 hover:text-blue-600 mr-2">Projects</a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <a href="{{ card.project.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-2">
-    {{ card.project.name }}
-  </a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <a href="{{ card.column.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-2">
-    {{ card.column.name }}
-  </a>
-  <span class="text-gray-500 mr-2">&gt;</span>
-  <span class="text-gray-500">{{ card.name }}</span>
-</div>
+
+{% include "_breadcrumbs.html" %}
 
 {% has_perm "cards.create_card" user card.project as can_create_card %}
 {% has_perm "cards.change_card" user card as can_change_card %}

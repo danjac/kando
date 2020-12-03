@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -39,10 +40,24 @@ def create_card(request, project_id, column_id=None):
             return redirect(card)
     else:
         form = CardForm(initial={"column": column}, project=project)
+
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (project.name, project.get_absolute_url()),
+    ]
+    if column:
+        breadcrumbs += [(column.name, column.get_absolute_url())]
+    breadcrumbs += [(_("New Card"), None)]
+
     return TemplateResponse(
         request,
         "cards/card_form.html",
-        {"form": form, "project": project, "column": column},
+        {
+            "form": form,
+            "project": project,
+            "column": column,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 
@@ -64,10 +79,21 @@ def card_detail(request, card_id):
         "card", "owner", "card__owner", "card__assignee"
     ).order_by("created")
 
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (card.project.name, card.project.get_absolute_url()),
+        (card.name, None),
+    ]
+
     return TemplateResponse(
         request,
         "cards/detail.html",
-        {"card": card, "tasks": tasks, "attachments": attachments},
+        {
+            "card": card,
+            "tasks": tasks,
+            "attachments": attachments,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 
@@ -87,10 +113,22 @@ def edit_card(request, card_id):
     else:
         form = CardForm(instance=card)
 
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (card.project.name, card.project.get_absolute_url()),
+        (card.name, card.get_absolute_url()),
+        (_("Edit Card"), None),
+    ]
+
     return TemplateResponse(
         request,
         "cards/card_form.html",
-        {"card": card, "form": form, "project": card.project},
+        {
+            "card": card,
+            "form": form,
+            "project": card.project,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 

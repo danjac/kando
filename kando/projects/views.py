@@ -5,6 +5,7 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -12,7 +13,7 @@ from django.views.decorators.http import require_POST
 from kando.attachments.models import Attachment
 from kando.cards.models import Card
 from kando.tasks.models import Task
-from kando.users.utils import has_perm_or_403
+from kando.users.utils import has_perm_or_403, user_display
 
 # Local
 from .forms import ProjectCreationForm, ProjectForm, ProjectMemberRoleForm
@@ -40,7 +41,17 @@ def create_project(request):
             return redirect(project)
     else:
         form = ProjectCreationForm()
-    return TemplateResponse(request, "projects/project_form.html", {"form": form})
+
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (_("New Project"), None),
+    ]
+
+    return TemplateResponse(
+        request,
+        "projects/project_form.html",
+        {"form": form, "breadcrumbs": breadcrumbs},
+    )
 
 
 @login_required
@@ -56,8 +67,17 @@ def edit_project(request, project_id):
             return redirect(project)
     else:
         form = ProjectForm(instance=project)
+
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (project.name, project.get_absolute_url()),
+        (_("Edit Project"), None),
+    ]
+
     return TemplateResponse(
-        request, "projects/project_form.html", {"form": form, "project": project}
+        request,
+        "projects/project_form.html",
+        {"form": form, "project": project, "breadcrumbs": breadcrumbs},
     )
 
 
@@ -100,10 +120,20 @@ def project_board(request, project_id):
         "project", "owner", "column", "assignee",
     )
 
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (project.name, None),
+    ]
+
     return TemplateResponse(
         request,
         "projects/board.html",
-        {"project": project, "columns": columns, "cards": cards,},
+        {
+            "project": project,
+            "columns": columns,
+            "cards": cards,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 
@@ -115,9 +145,16 @@ def project_members(request, project_id):
     members = project.projectmember_set.select_related("user", "project").order_by(
         "user__name", "user__username"
     )
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (project.name, project.get_absolute_url()),
+        (_("Users and Permissions"), None),
+    ]
 
     return TemplateResponse(
-        request, "projects/members.html", {"project": project, "members": members}
+        request,
+        "projects/members.html",
+        {"project": project, "members": members, "breadcrumbs": breadcrumbs},
     )
 
 
@@ -213,6 +250,16 @@ def project_member_detail(request, project_id, username):
     owned_cards = cards.filter(owner=user)
     assigned_cards = cards.filter(assignee=user)
 
+    breadcrumbs = [
+        (_("Projects"), reverse("projects:projects_overview")),
+        (project.name, project.get_absolute_url()),
+        (
+            _("Users and Permissions"),
+            reverse("projects:project_members", args=[project.id]),
+        ),
+        (user_display(user), None),
+    ]
+
     return TemplateResponse(
         request,
         "projects/member_detail.html",
@@ -224,5 +271,6 @@ def project_member_detail(request, project_id, username):
             "is_owner": is_owner,
             "owned_cards": owned_cards,
             "assigned_cards": assigned_cards,
+            "breadcrumbs": breadcrumbs,
         },
     )
