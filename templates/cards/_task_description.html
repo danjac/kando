@@ -4,7 +4,7 @@
              checked{% endif %}
              class="mr-4"
              {% if can_change_task %}
-             data-action="ajax#post"
+             data-action="click->ajax#post:once"
              {% else %}
              disabled
              {% endif %}

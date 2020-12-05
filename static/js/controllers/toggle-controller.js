@@ -8,4 +8,10 @@ export default class extends Controller {
       item.classList.toggle('hidden');
     });
   }
+
+  close() {
+    this.itemTargets.forEach((item) => {
+      item.classList.add('hidden');
+    });
+  }
 }

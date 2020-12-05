@@ -146,7 +146,7 @@
         <div class="flex items-center"
              {% if can_change_task %}
              data-controller="ajax"
-             data-ajax-replace
+             data-ajax-replace-value
              data-ajax-url-value="{% url 'tasks:toggle_complete' task.id %}{% endif %}">
           {% include "cards/_task_description.html" %}
         </div>
