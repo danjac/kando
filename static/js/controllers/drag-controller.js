@@ -2,14 +2,23 @@ import { Controller } from 'stimulus';
 import axios from 'axios';
 import Sortable from 'sortablejs';
 
+const DEFAULT_GROUP = 'shared';
+
 export default class extends Controller {
   static targets = ['draggable'];
+
+  static values = {
+    draggable: String,
+    group: String,
+    url: String,
+  };
+
   connect() {
     // set put: false to prevent
     this.sortable = Sortable.create(this.element, {
       animation: 150,
-      draggable: this.data.get('draggable') || '.draggable',
-      group: this.data.get('group') || 'shared',
+      draggable: this.draggableValue || '.draggable',
+      group: this.groupValue || DEFAULT_GROUP,
       onAdd: this.add.bind(this),
       onRemove: this.remove.bind(this),
       onUpdate: this.update.bind(this),
@@ -25,17 +34,15 @@ export default class extends Controller {
   }
 
   update(event) {
-    if (this.data.has('url')) {
+    if (this.hasUrlValue) {
       const items = [];
-      // problem if nested draggable items...
-      // need to check if target has a specific "grouper"
-      const group = this.data.get('group');
+      const group = this.groupValue || DEFAULT_GROUP;
       this.draggableTargets.forEach((target) => {
         if (target.dataset.group === group) {
           items.push(target.dataset.id);
         }
       });
-      axios.post(this.data.get('url'), { items });
+      axios.post(this.urlValue, { items });
     }
   }
 }

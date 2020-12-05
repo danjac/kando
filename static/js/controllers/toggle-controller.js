@@ -3,21 +3,9 @@ import { Controller } from 'stimulus';
 export default class extends Controller {
   static targets = ['item'];
 
-  toggle(event) {
-    event.preventDefault();
-    event.stopPropagation();
+  toggle() {
     this.itemTargets.forEach((item) => {
-      item.classList.toggle(this.toggleClass);
+      item.classList.toggle('hidden');
     });
-  }
-
-  close(event) {
-    this.itemTargets.forEach((item) => {
-      item.classList.add(this.toggleClass);
-    });
-  }
-
-  get toggleClass() {
-    return this.data.get('class') || 'hidden';
   }
 }

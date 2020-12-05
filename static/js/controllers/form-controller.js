@@ -37,7 +37,4 @@ export default class extends Controller {
       eval(response.data);
     }
   }
-  reset() {
-    this.element.reset();
-  }
 }

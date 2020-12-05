@@ -19,7 +19,7 @@
       <i class="fa fa-bars"></i>
     </button>
     <div class="rounded absolute hidden border shadow-xl z-50 opacity-100 p-2 mt-1 w-64 bg-white left-0"
-         data-target="toggle.item"
+         data-toggle-target="item"
          data-action="click@window->toggle#close keydown@window->toggle#close">
 
       {% if can_create_card %}
@@ -38,8 +38,8 @@
 
       {% if can_delete_card %}
       <button data-controller="ajax"
-              data-ajax-confirm="{% translate 'Are you sure you want to delete this card?' %}"
-              data-ajax-url="{% url 'cards:delete_card' card.id %}"
+              data-ajax-confirm-value="{% translate 'Are you sure you want to delete this card?' %}"
+              data-ajax-url-value="{% url 'cards:delete_card' card.id %}"
               data-action="toggle#toggle ajax#post"
               class="block p-1 rounded hover:bg-red-100 text-red-800 w-full text-left">
         <i class="fa fa-trash mr-2"></i>{% translate "Delete Card" %}
@@ -98,15 +98,15 @@
 
 {% has_perm "tasks.move_tasks" user card as can_move_tasks %}
 <div {% spaceless %}{% if can_move_tasks %}data-controller="drag"
-     data-drag-group="shared"
-     data-drag-url="{% url 'tasks:move_tasks' card.id %}"
+     data-drag-group-value="shared"
+     data-drag-url-value="{% url 'tasks:move_tasks' card.id %}"
      {% endif %}{% endspaceless %}>
   {% for task in tasks %}
 
   <div data-controller="toggle"
        class="draggable">
 
-    <div data-target="toggle.item"
+    <div data-toggle-target="item"
          class="mb-3 hidden">
       <form class="sm:flex border p-2 items-center justify-between"
             data-controller="form"
@@ -135,19 +135,19 @@
       </form>
     </div>
 
-    <div data-target="toggle.item"
+    <div data-toggle-target="item"
          class="mb-3">
       <div class="sm:flex border p-2 items-center justify-between"
            data-id="{{ task.id }}"
            data-group="shared"
-           data-target="drag.draggable">
+           data-drag-target="draggable">
         {% has_perm "tasks.change_task" user task as can_change_task %}
         {% has_perm "tasks.delete_task" user task as can_delete_task %}
         <div class="flex items-center"
              {% if can_change_task %}
              data-controller="ajax"
              data-ajax-replace
-             data-ajax-url="{% url 'tasks:toggle_complete' task.id %}{% endif %}">
+             data-ajax-url-value="{% url 'tasks:toggle_complete' task.id %}{% endif %}">
           {% include "cards/_task_description.html" %}
         </div>
         <div>
@@ -159,7 +159,7 @@
           {% endif %}
           {% if can_delete_task %}
           <button data-controller="ajax"
-                  data-ajax-url="{% url 'tasks:delete_task' task.id %}"
+                  data-ajax-url-value="{% url 'tasks:delete_task' task.id %}"
                   data-action="ajax#post"
                   class="border border-red-800 px-4 py-1 rounded hover:bg-red-100 text-red-800">
             <i class="fa fa-trash mr-2"></i>{% translate "Delete" %}
@@ -177,14 +177,14 @@
 {% if can_create_task %}
 <div data-controller="toggle"
      class="mb-3">
-  <div data-target="toggle.item">
+  <div data-toggle-target="item">
     <button data-action="toggle#toggle"
             class="border px-4 py-1 rounded hover:bg-gray-100 mr-2">
       <i class="fa fa-plus mr-2"></i>{% translate "Add New Task" %}
     </button>
   </div>
   <div class="hidden"
-       data-target="toggle.item">
+       data-toggle-target="item">
     <form class="sm:flex border p-2 items-center justify-between"
           data-controller="form"
           data-action="form#submit"
@@ -248,8 +248,8 @@
         {% has_perm "attachments.delete_attachment" user attachment as can_delete_attachment %}
         {% if can_delete_attachment %}
         <button data-controller="ajax"
-                data-ajax-url="{% url 'attachments:delete_attachment' attachment.id %}"
-                data-ajax-confirm="{% translate 'Are you sure you want to delete this?' %}"
+                data-ajax-url-value="{% url 'attachments:delete_attachment' attachment.id %}"
+                data-ajax-confirm-value="{% translate 'Are you sure you want to delete this?' %}"
                 data-action="ajax#post"
                 class="border border-red-800 px-4 py-1 rounded hover:bg-red-100 text-red-800">
           <i class="fa fa-trash mr-2"></i>{% translate "Delete" %}
@@ -264,14 +264,14 @@
 {% has_perm "attachments.create_attachment" user card as can_create_attachment %}
 {% if can_create_attachment %}
 <div data-controller="toggle">
-  <div data-target="toggle.item">
+  <div data-toggle-target="item">
     <button data-action="toggle#toggle"
             class="border px-4 py-1 rounded hover:bg-gray-100 mr-2">
       <i class="fa fa-upload mr-2"></i>{% translate "Add New Attachment" %}
     </button>
   </div>
   <div class="hidden"
-       data-target="toggle.item">
+       data-toggle-target="item">
     <form class="sm:flex border p-2 items-center justify-between"
           data-controller="form"
           data-action="form#submit"
